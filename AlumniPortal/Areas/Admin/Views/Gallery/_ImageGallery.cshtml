@@ -1,0 +1,10 @@
+﻿@model List<Asset>
+
+@foreach (var img in Model)
+{
+    <div class="imageContainer">
+        <img src="~/Assets/Albums/@img.AssetName" alt="not found" class="img-rounded">
+        <a href="" class="deleteImage" data-assetid="@img.AssetId"><span class="glyphicon glyphicon-remove"></span></a>
+    </div>
+
+}    

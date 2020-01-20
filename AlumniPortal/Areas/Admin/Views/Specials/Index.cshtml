@@ -1,0 +1,67 @@
+﻿@using AlumniPortal.Utilities
+@model SpecialViewModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Specials</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
+</p>
+
+<table id="specialsTable" class="table">
+    <thead>
+    <tr>
+        <th>
+            Image
+        </th>
+        <th>
+            Title
+        </th>
+        <th>
+            Body
+        </th>
+        <th style="min-width: 120px"></th>
+    </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Specials)
+        {
+            <tr>
+                <td>
+                    @if (item.Image != null)
+                {
+                        <img src="~/Assets/Specials/@item.Image.AssetName" alt="image" width="200" height="150" />
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @{
+                        var body = item.Body.Truncate(200);
+                    }
+                    @HtmlStripper.Strip(body)
+                </td>
+                <td style="min-width: 120px">
+                    @Html.ActionLink("Edit", "Edit", new { id = item.SpecialId }, new { @class = "btn btn-default" })
+                    @Html.ActionLink("Delete", "Delete", new { id = item.SpecialId }, new { @class = "btn btn-default" })
+                </td>
+            </tr>
+                        }
+    </tbody>
+</table>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(function() {
+            $('#specialsTable').DataTable({
+                "paging": true,
+                "ordering": true
+            });
+        })
+    </script>
+}

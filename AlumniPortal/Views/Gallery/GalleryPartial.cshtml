@@ -1,0 +1,52 @@
+﻿@model Album
+
+<style type="text/css">
+    .galleryViewHomepage {
+        color: white;
+        display: block;
+        right: 15px;
+        position: absolute;
+        bottom: 0;
+    }
+
+    .detailsBar {
+        position: relative;
+        background-color: rgba(0,0,0, 0.4);
+        height: 42px;
+        bottom: -190px;
+        color: rgb(241, 241, 241);
+    }
+    .detailsBarTitle {
+        color: white;
+        padding-left: 7px;
+        padding-top: 3px;
+        font-size: 15px;
+    }
+    .detailsBarDate {
+        color: white;
+        padding-left: 7px;
+        font-size: 11px;
+    }
+</style>
+
+<div style="height: 250px">
+    @if (Model != null)
+    {
+        <div style="background: url(@Url.Content("~/Assets/Albums/" + Model.CoverImage.AssetName)) no-repeat center center; background-size: cover; height: 250px">
+            <div class="detailsBar">
+                <div class="detailsBarTitle">@Model.Name</div>
+                <div class="detailsBarDate">@Model.CreatedDate.ToString("M") @Model.CreatedDate.ToString("yyyy")</div>
+            </div>
+            <a href="@Url.Action("Album", "Gallery", new {id = Model.AlbumId})">
+                <div class="viewMoreContainer galleryViewHomepage">
+                    <span>GALLERY</span>
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </div>
+            </a>
+        </div>
+    }
+    else
+    {
+        <h4>No albums</h4>
+    }
+</div>

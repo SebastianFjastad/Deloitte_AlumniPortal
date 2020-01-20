@@ -1,0 +1,85 @@
+﻿@using AlumniPortal.Models
+@using AlumniPortal.Utilities
+@model IEnumerable<Alumnus>
+
+@{
+    ViewBag.Title = "Featured alumni";
+}
+
+<h2>Featured Alumni</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
+</p>
+<table id="alumniTable" class="table">
+    <thead>
+        <tr>
+            <th>
+                Profile pic
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Job Title
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Website
+            </th>
+            <th>
+                Interview
+            </th>
+            <th style="min-width: 120px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var alumnus in Model)
+        {
+            <tr>
+                <td>
+                    @if (alumnus.Asset != null)
+                {
+                        <img src="~/Assets/Alumni/@alumnus.Asset.AssetName" alt="image" width="200" height="150" />
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => alumnus.FirstName) @Html.DisplayFor(modelItem => alumnus.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => alumnus.JobTitle)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => alumnus.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => alumnus.Website)
+                </td>
+                <td>
+                    @{
+                        var body = alumnus.Interview.Truncate(200);
+                    }
+                    @HtmlStripper.Strip(body)
+                </td>
+                <td style="min-width: 120px">
+                    @Html.ActionLink("Edit", "Edit", new { id = alumnus.AlumnusID }, new { @class = "btn btn-default" })
+                    @Html.ActionLink("Delete", "Delete", new { id = alumnus.AlumnusID }, new { @class = "btn btn-default" })
+                </td>
+            </tr>
+                        }
+    </tbody>
+</table>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(function () {
+            $('#alumniTable').DataTable({
+                "paging": true,
+                "ordering": true
+            });
+        })
+    </script>
+}

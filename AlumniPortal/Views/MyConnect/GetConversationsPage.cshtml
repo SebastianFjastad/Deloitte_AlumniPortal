@@ -1,0 +1,66 @@
+﻿@using Microsoft.AspNet.Identity
+@model List<Conversation>
+
+@{
+    var currUserId = User.Identity.GetUserId();
+}
+
+@foreach (var conv in Model.OrderByDescending(c => c.LastModified))
+{
+    <div class="chatContainer">
+        @{
+            //user is the other user
+            var user = conv.UserA.Id != currUserId ? conv.UserA : conv.UserB;
+            var imgPath = "";
+
+            if (user.ProfilePic == null)
+            {
+                imgPath = "http://www.corporatetraveller.ca/assets/images/profile-placeholder.gif";
+            }
+            else
+            {
+                imgPath = "/Assets/Alumni/" + user.ProfilePic.AssetName;
+            }
+        }
+
+        <div class="col-xs-12" style="border-bottom: lightgray 1px solid; padding-bottom: 15px;">
+            <a href="@Url.Action("Alumnus", "Alumni", new {userId = user.Id})">
+                <div class="imgContainer">
+                    <img src="@imgPath" class="img-circle" alt="profile pic" width="80" height="80" />
+                </div>
+            </a>
+            <div class="userChatContainer" data-convid="@conv.ConversationId" data-userid="@user.Id">
+                <div class="userName">@user.FirstName @user.LastName</div>
+
+                @*if the curr user is waiting for them to accept*@
+                @if (conv.UserA.Id == currUserId && conv.UserBAccepted == null)
+                {
+                    <div class="messagePreview">Awaiting their acceptance</div>
+                }
+                //if the curr user must accept
+                else if (conv.UserA.Id != currUserId && conv.UserBAccepted == null)
+                {
+                    <div class="messagePreview">@user.FirstName wants to connect</div>
+                }
+                //users are connected display the messages
+                else if (conv.UserBAccepted == true)
+                {
+                    var convStatus = conv.Messages.Any() ? conv.Messages.First().Body : "Start chatting";
+                    <div class="messagePreview" data-status="chat" data-chatid="@conv.ConversationId">@convStatus</div>
+                    //display first message or default
+                }
+
+                @if (conv.UserA.Id != currUserId && conv.UserBAccepted == null)
+                {
+                    <input class="updateStatusButton" type="button" value="Accept" data-updateto="true" />
+                    <input class="updateStatusButton" type="button" value="Hide" data-updateto="false" />
+                }
+            </div>
+            <div class="lastModifiedDate pull-right">@conv.LastModified.ToString("ddd") @conv.LastModified.ToString("dd") </div>
+        </div>
+    </div>
+            }
+
+
+
+

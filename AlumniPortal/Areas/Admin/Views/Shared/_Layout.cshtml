@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/dropzonescss")
+    @*@Styles.Render("~/Content/DataTables")*@
+    @Scripts.Render("~/bundles/modernizr")
+
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.8/css/jquery.dataTables.min.css"/>
+
+    <style type="text/css">
+        body {
+            padding-top: 65px;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Alumni", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Gallery", "Index", "Gallery")</li>
+                    <li>@Html.ActionLink("News", "Index", "News")</li>
+                    <li>@Html.ActionLink("Events", "Index", "Events")</li>
+                    <li>@Html.ActionLink("Specials", "Index", "Specials")</li>
+                    <li>@Html.ActionLink("Careers", "Index", "Career")</li>
+                    <li>@Html.ActionLink("Users", "Index", "Users")</li>
+                    <li>@Html.ActionLink("Alumni", "Index", "Alumni")</li>
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <div class="row">
+                <div class="col-xs-12 text-center">
+                    Material on this website is © 2011 Deloitte Global Services Limited, or a member firm of Deloitte
+                    Touche Tohmatsu Limited, or one of their affiliates.  See Legal for copyright and other legal
+                    information.  Deloitte refers to one or more of Deloitte Touche Tohmatsu Limited, a UK private
+                    company limited by guarantee, and its network of member firms, each of which is a legally separate
+                    and independent entity.  Please see <a href="http://www.deloitte.com/about" target="_blank">www.deloitte.com/about</a> for a detailed description of the legal
+                    structure of Deloitte Touche Tohmatsu Limited and its member firms.
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12 text-center">
+                    <a href="http://www.deloitte.com/view/en_za/za/legal/index.htm" target="_blank">Legal</a>
+                    | <a href="http://www.deloitte.com/view/en_za/za/privacy/index.htm" target="_blank">Legal</a>
+                    | <a href="http://www.deloitte.com/view/en_za/za/security/index.htm" target="_blank">Security</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/plugins")
+    @Scripts.Render("~/bundles/dropzonescripts")
+    @Scripts.Render("~/bundles/imageupload")
+    @*@Scripts.Render("~/bundles/DataTables")*@
+    <script src="//cdn.datatables.net/1.10.8/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

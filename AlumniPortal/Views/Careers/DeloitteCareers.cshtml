@@ -1,0 +1,76 @@
+﻿@using System.Text.RegularExpressions
+@using AlumniPortal.Utilities
+@model IEnumerable<AlumniPortal.Models.RSSItem>
+
+<style type="text/css">
+    .careerContainer {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color: rgb(117, 115, 115);
+    }
+
+    .headingPrimary {
+        text-align: center;
+        color: rgb(3, 65, 128);
+        font-weight: bolder;
+    }
+
+    .careerTitle {
+        font-size: 14px;
+        color: rgb(117, 115, 115) !important;
+        font-weight: bolder;
+    }
+
+    .careerDesc {
+        font-size: 14px;
+        color: rgb(117, 115, 115) !important;
+    }
+
+    .linkContainer {
+        margin-bottom: 15px;
+    }
+
+    .careerLink {
+        color: rgb(0, 227, 255);
+    }
+</style>
+
+<h3 class="headingPrimary">Deloitte Careers</h3>
+
+@foreach (var career in Model)
+{
+    <div class="col-xs-12">
+        <div class="row">
+            <div class="careerContainer">
+                @{
+                    //strip out the  unicode chars
+                    var formattedTitle = career.Title.Replace('\u2013', '-');
+                    formattedTitle = career.Title.Replace('\u2014', '-');
+                    formattedTitle = career.Title.Replace('\u2015', '-');
+
+                    //take just the "title" out of string
+                    var jobTitle = formattedTitle;
+                    int index = jobTitle.IndexOf("-");
+                    if (index > 0)
+                    {
+                        jobTitle = jobTitle.Substring(0, index);
+                    }
+
+                    //exclude title and take rest of string
+                    var jobDesc = formattedTitle;
+                    int i = jobDesc.IndexOf("-");
+                    if (i > 0)
+                    {
+                        jobDesc = jobDesc.Substring(i + 1, jobDesc.Length - (i + 1));
+                    }
+
+                }
+
+                <div class="careerTitle">@jobTitle</div>
+                <div class="careerDesc">@jobDesc</div>
+                <div class="linkContainer">
+                    <a href="@career.Link" class="careerLink">See more...</a>
+                </div>
+            </div>
+        </div>
+    </div>
+                    }

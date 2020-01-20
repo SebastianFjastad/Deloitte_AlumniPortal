@@ -1,0 +1,170 @@
+﻿@using AlumniPortal.Utilities
+@model List<Special>
+@{
+    ViewBag.Title = "Specials";
+}
+
+<style type="text/css">
+    .hr {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        border-color: lightgrey;
+    }
+
+    .headingPrimary {
+        text-align: center;
+        color: rgb(3, 65, 128);
+        font-weight: bolder;
+    }
+
+    .specialImage {
+        float: left;
+        margin-right: 15px;
+        margin-bottom: 15px;
+    }
+
+    .specialTitle {
+        margin-top: 10px;
+        font-weight: bold;
+        color: rgb(117, 115, 115);
+    }
+
+    .specialBody {
+        float: left;
+    }
+
+    .specialDate, .specialDay {
+        position: relative;
+        color: #fff;
+        font-weight: 700;
+        background-color: rgba(0, 227, 255, 0.26);
+        z-index: 999;
+        text-align: center;
+    }
+
+    .specialDay {
+        text-decoration: underline;
+        font-size: 20px;
+        padding: 0 5px 0 5px;
+    }
+
+    .specialDate {
+        font-size: 10px;
+        padding: 0 5px 10px 5px;
+    }
+
+    .dateContainer {
+        width: 50px;
+        margin-top: 45px;
+    }
+
+    .timelineTop {
+        width: 1.5px;
+        background-color: #C7C7C7;
+        position: absolute;
+        height: 35px;
+        margin-left: 24px;
+        z-index: 0;
+    }
+
+    .timelineBottom {
+        width: 1.5px;
+        background-color: #C7C7C7;
+        position: absolute;
+        height: 82px;
+        top: 105px;
+        margin-left: 24px;
+        z-index: 0;
+    }
+
+    @@media screen and (max-width: 767px) {
+
+        .timelineBottom {
+            height: 190px;
+        }
+    }
+    .viewMoreContainer {
+        width: 120px;
+        padding: 5px 0 2px 5px;
+        padding-left: 10px;
+        background-color: rgba(123, 237, 37, 0.6);
+        font-size: 20px;
+        font-weight: bolder;
+        color: white;
+        cursor: pointer;
+    }
+</style>
+
+<div class="row">
+    <div class="col-sm-8">
+        <h3 class="headingPrimary">Specials</h3>
+
+        <hr class="hr" />
+
+        @foreach (var special in Model)
+            {
+            <div class="row form-group">
+                <div class="col-xs-2">
+                    <div class="timelineTop"></div>
+                    <div class="dateContainer">
+                        <div class="specialDay">@special.CreatedDate.ToString("dd")</div>
+                        <div class="specialDate">@special.CreatedDate.ToString("MMM")</div>
+                    </div>
+                    <div class="timelineBottom"></div>
+                </div>
+
+                <div class="col-xs-10">
+                    <div class="row">
+                        <div class="col-sm-4 col-md-4">
+                            <div class="specialImage" style="background: url(@Url.Content("~/Assets/Specials/" + special.Image.AssetName)) no-repeat center center; background-size: cover; height: 150px; width: 100%"></div>
+                        </div>
+                        <div class="col-sm-8 col-md-8">
+                            <h4 class="specialTitle">@special.Title</h4>
+                            <div class="specialBody">
+                                @(Html.Raw(special.Body.Truncate(300) + "...") ) <a href="http://www.schooloftax.co.za/school-of-tax-booking-form/">Read more</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div id="specialsResults">
+
+        </div>
+
+        <div class="form-group text-center">
+            <div id="loadMore" class="col-xs-4 col-xs-offset-4 viewMoreContainer">
+                <span>MORE</span>
+                <span class="glyphicon glyphicon-chevron-down" style="padding-top: 3px; margin-left: 5px;"></span>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3" style="margin-top: 15px; min-width: 242px;">
+        @Html.Action("Calendar", "Events", new { isVertical = true })
+        @Html.Action("GalleryPartial", "Gallery")
+    </div>
+</div>
+
+@section scripts
+    {
+    <script type="text/javascript">
+        $(function () {
+            //default page no is 1, so set th next batch to be page 2
+            var page = 2;
+
+            $('#loadMore').on('click', function () {
+                $.ajax({
+                    url: '@Url.Action("GetArticlesPage", "News")',
+                    type: "GET",
+                    dataType: "html",
+                    data: { pageNo: page, pageSize: 4 },
+                    success: function (data) {
+                        $('#specialsResults').append(data);
+                        page++;
+                    }
+                });
+            });
+        })
+    </script>
+}

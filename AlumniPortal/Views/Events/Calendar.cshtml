@@ -1,0 +1,287 @@
+﻿@using Microsoft.AspNet.Identity
+@model AlumniPortal.Models.CalendarViewModel
+
+<style type="text/css">
+    .eventContainer {
+        height: 170px;
+        padding: 10px;
+        background-color: rgb(241, 241, 241);
+        color: darkgray;
+    }
+
+    .eventHeader {
+        margin-top: 5px;
+        font-weight: bold;
+        text-align: center;
+        color: rgb(117, 115, 115);
+    }
+
+    .eventTitle {
+        color: rgb(3, 65, 128);
+        margin-top: 5px;
+        margin-bottom: 0;
+        font-weight: bold;
+    }
+
+    .hr {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        border-color: lightgrey;
+    }
+
+    .eventDateTop {
+        color: rgb(117, 115, 115);
+        font-weight: bold;
+    }
+
+    .eventDescription {
+        color: rgb(141, 141, 141);
+    }
+
+    .eventFooterContainer {
+        padding-left: 10px;
+        padding-right: 10px;
+        color: white;
+        background-color: rgb(3, 65, 128);
+        height: 80px;
+        width: 100%;
+    }
+
+    .eventDay {
+        font-size: 35px;
+        font-weight: bold;
+    }
+
+    .eventMonth, .eventYear {
+        display: inline-block;
+    }
+
+    .addEventContainer {
+        cursor: pointer;
+        width: 65px;
+        height: 80px;
+        padding: 5px;
+        margin-right: -10px;
+        background-color: rgb(0, 54, 110);
+        text-align: center;
+    }
+
+    .calendarContainer {
+        background-color: #cfcece;
+    }
+
+    .rePadRight {
+        padding-right: 0;
+    }
+
+    @@media screen and (max-width: 767px) {
+        .mediaFix {
+            width: auto;
+            font-size: inherit;
+        }
+
+        .rePadRight {
+            padding-right: 0;
+        }
+
+        .ui-datepicker-calendar {
+            max-width: none;
+        }
+    }
+
+    /*--------add to event tooltip style----------*/
+    .ttip {
+        position: absolute;
+        width: 250px;
+        height: 180px;
+        color: #fff;
+        padding: 20px;
+        -webkit-box-shadow: 0 1px 2px #303030;
+        -moz-box-shadow: 0 1px 2px #303030;
+        box-shadow: 0 1px 2px #303030;
+        background-color: rgb(241, 241, 241);
+        display: none;
+    }
+
+    .contents {
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    .close {
+        font-size: 16px;
+        text-align: center;
+        display: block;
+    }
+
+    #background {
+        display: none;
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+    }
+
+    #ttipContainer {
+        display: none;
+        position: absolute;
+        background: #FFFFFF;
+        padding: 0px;
+        z-index: 99999;
+        min-height: 0px;
+        min-width: 0px;
+        color: #336699;
+    }
+
+    .applyButton {
+        background-color: rgb(36, 95, 216);
+        color: white !important;
+        border: rgb(36, 95, 216) !important;
+        padding: 10px 20px;
+        margin-bottom: 10px;
+        border-radius: 0;
+        cursor: pointer;
+        width: 80px;
+        font-size: 15px;
+        font-weight: bolder;
+    }
+</style>
+
+<div class="hidden">
+    @foreach (var e in Model.Events)
+    {
+        bool userInEvent = false;
+        bool userApplied = false;
+        bool canUserClickAdd = false;
+
+        //if the user is logged on
+        if (Model.User != null)
+        {
+            //check if the user is attending event
+            userInEvent = e.EventInvites.Any(ei => ei.Id == Model.User.Id && ei.Attending);
+            //check if the user has applied to event
+            userApplied = e.EventInvites.Any(ei => ei.Id == Model.User.Id && ei.IsApplication);
+            //get user id
+            <input id="userId" data-userid="@User.Identity.GetUserId()" />
+            //get user region
+            <input id="userRegion" data-userregion="@Model.User.Region" />
+            
+            if (!userApplied && !userInEvent)
+            {
+                canUserClickAdd = true;
+            }
+        }
+
+        //create event elements to query
+        <input class="event" type="hidden"
+               data-id="@e.EventID"
+               data-from="@e.From.ToString("g")"
+               data-to="@e.To.ToString("g")"
+               data-fromforaddthis="@e.From.ToString("dd/M/yyyy hh:mm")"
+               data-toforaddthis="@e.To.ToString("dd/M/yyyy hh:mm")"
+               data-longdate="@e.From.ToLongDateString()"
+               data-day="@e.From.ToString("dd")"
+               data-month="@e.From.ToString("MMMM")"
+               data-year="@e.From.ToString("yyyy")"
+               data-name="@e.Title"
+               data-body="@e.Description"
+               data-location="@e.LocationName"
+               data-region="@e.Region"
+               data-eventlink="@Url.Action("Event", "Events", new {id = e.EventID})"
+               data-userinevent="@userInEvent"
+               data-userapplied="@userApplied"
+               data-canuserclickadd="@canUserClickAdd" />
+    }
+
+</div>
+
+@{
+    var defaultEvent = new Event();
+    if (Model.Events.Any())
+    {
+        defaultEvent = Model.Events.First();
+    }
+}
+<div class="row">
+    <div class="col-xs-5 col-md-7 rePadRight">
+        <div class="eventContainer">
+            <h3 class="eventHeader">Events</h3>
+            <hr class="hr" />
+            @if (Model.Events.Any())
+            {
+                <h4 class="eventTitle">@defaultEvent.Title</h4>
+                <div class="eventDateTop">@defaultEvent.From.ToLongDateString()</div>
+                <div class="eventDescription">@defaultEvent.Description</div>
+            }
+            else
+            {
+                <h4 class="eventTitle">No upcoming events</h4>
+            }
+        </div>
+        <div class="eventFooterContainer">
+            <div class="pull-left mediaFix">
+                <div class="eventDay">@defaultEvent.From.ToString("dd")</div>
+                <div class="eventMonth">@defaultEvent.From.ToString("MMMM")</div> |
+                <div class="eventYear">@defaultEvent.From.ToString("yyyy")</div>
+            </div>
+
+            <div class="pull-right addEventContainer">
+
+                <div class="pull-right addEventToCalendar">
+                    <span>Add to <br /> calendar</span><br />
+                    <span class="glyphicon glyphicon-calendar" style="font-size: 25px;"></span>
+                </div>
+
+                <div id="ttipContainer">
+                    <div class="ttip">
+                        <div class="row">
+                            <div class="contents col-xs-8">
+                                <div title="Add to Calendar" class="addthisevent">
+                                    Add to <br />Calendar
+                                    <span class="start"></span>
+                                    <span class="end"></span>
+                                    <span class="title"></span>
+                                    <span class="timezone">Africa/Johannesburg</span>
+                                    <span class="description"></span>
+                                    <span class="location"></span>
+                                    <span class="date_format">DD/MM/YYYY</span>
+                                </div>
+                                <span class="eventIdCalendar" style="display: none"></span>
+                                <span class="eventRegion" style="display: none"></span>
+                                <span class="canUserClickAdd" style="display: none"></span>
+                            </div>
+
+                            <div class="col-xs-4 pull-right">
+                                <span class="close">Close</span>
+                            </div>
+
+                            <div id="applyContainer" class="col-xs-12 text-left" style="display: none;">
+                                <input id="applyButton" type="button" class="applyButton" value="Apply" />
+                                <p style="color: rgb(117, 115, 115); text-align: left;">
+                                    Because you are outside the event's region, you must apply to attend the event.
+                                </p>
+                                <div id="applyResult">
+
+                                </div>
+                            </div>
+
+                            <div id="cannotApplyContainer" class="col-xs-12" style="display: none;">
+                                <p style="color: rgb(117, 115, 115);">You are already attending this event, or waiting acceptance.</p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div id="background"></div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="inlineCalendar" class="col-xs-7 col-md-5 rePadLeft">
+        <div class="calendarContainer">
+        </div>
+    </div>
+</div>

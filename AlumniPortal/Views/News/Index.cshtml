@@ -1,0 +1,162 @@
+﻿@using AlumniPortal.Models
+@using AlumniPortal.Utilities
+@model List<AlumniPortal.Entities.Article>
+@{
+    ViewBag.Title = "Index";
+}
+
+<style type="text/css">
+    .hr {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        border-color: lightgrey;
+    }
+
+    .headingPrimary {
+        text-align: center;
+        color: rgb(3, 65, 128);
+        font-weight: bolder;
+    }
+
+    .articleImage {
+        float: left;
+        margin-right: 15px;
+        margin-bottom: 15px;
+    }
+
+    .articleTitle {
+        margin-top: 10px;
+        font-weight: bold;
+        color: rgb(117, 115, 115);
+    }
+
+    .articleBody {
+        float: left;
+    }
+
+    .articleDate, .articleDay {
+        position: relative;
+        color: #fff;
+        font-weight: 700;
+        background-color: rgba(0, 227, 255, 0.26);
+        z-index: 999;
+        text-align: center;
+    }
+
+    .articleDay {
+        text-decoration: underline;
+        font-size: 20px;
+        padding: 0 5px 0 5px;
+    }
+
+    .articleDate {
+        font-size: 10px;
+        padding: 0 5px 10px 5px;
+    }
+
+    .dateContainer {
+        width: 50px;
+        margin-top: 45px;
+    }
+
+    .timelineTop {
+        width: 1.5px;
+        background-color: #C7C7C7;
+        position: absolute;
+        height: 35px;
+        margin-left: 24px;
+        z-index: 0;
+    }
+
+    .timelineBottom {
+        width: 1.5px;
+        background-color: #C7C7C7;
+        position: absolute;
+        height: 82px;
+        top: 105px;
+        margin-left: 24px;
+        z-index: 0;
+    }
+
+    @@media screen and (max-width: 767px) {
+    
+        .timelineBottom {
+        height: 190px;
+    }
+}
+</style>
+
+<div class="row">
+    <div class="col-sm-8">
+        <h3 class="headingPrimary">NEWS</h3>
+
+        <hr class="hr" />
+
+        @foreach (var article in Model)
+            {
+                <div class="row form-group">
+                <div class="col-xs-2">
+                    <div class="timelineTop"></div>
+                    <div class="dateContainer">
+                        <div class="articleDay">@article.CreatedDate.ToString("dd")</div>
+                        <div class="articleDate">@article.CreatedDate.ToString("MMM")</div>
+                    </div>
+                    <div class="timelineBottom"></div>
+                </div>
+
+                <div class="col-xs-10">
+                    <div class="row">
+                        <div class="col-sm-4 col-md-4">
+                            <div class="articleImage" style="background: url(@Url.Content("~/Assets/Articles/" + article.Assets.First(f => f.FileType == FileType.ArticleImage).AssetName)) no-repeat center center; background-size: cover; height: 150px; width: 100%"></div>
+                        </div>
+                        <div class="col-sm-8 col-md-8">
+                            <h4 class="articleTitle">@article.Title</h4>
+                            <div class="articleBody">
+                                @(Html.Raw(article.Body.Truncate(300) + "...") ) <a href="@Url.Action("Article", "News" , new {id=article.ArticleID})">Read more</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div id="newsResults">
+
+        </div>
+
+        <div class="form-group text-center">
+            <div id="loadMore" class="col-xs-4 col-xs-offset-4 viewMoreContainer">
+                <span>MORE</span>
+                <span class="glyphicon glyphicon-chevron-down" style="padding-top: 3px; margin-left: 5px;"></span>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3" style="margin-top: 15px; min-width: 242px;">
+        @Html.Action("Calendar", "Events", new { isVertical = true })
+        @Html.Action("GalleryPartial", "Gallery")
+    </div>
+</div>
+
+
+@section scripts
+    {
+    <script type="text/javascript">
+        $(function () {
+            //default page no is 1, so set th next batch to be page 2
+            var page = 2;
+
+            $('#loadMore').on('click', function () {
+                $.ajax({
+                    url: '@Url.Action("GetArticlesPage", "News")',
+                    type: "GET",
+                    dataType: "html",
+                    data: { pageNo: page, pageSize: 4 },
+                    success: function (data) {
+                        $('#newsResults').append(data);
+                        page++;
+                    }
+                });
+            });
+        })
+    </script>
+}

@@ -1,0 +1,85 @@
+﻿@model EventViewModel
+
+@{
+    ViewBag.Title = "Events";
+}
+
+<h2>Events</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary"})
+</p>
+<table class="table" id="activeUsers">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Event.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Event.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Event.LocationName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Event.From)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Event.To)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Event.Region)
+        </th>
+        <th>
+            Event Applicants
+        </th>
+        <th style="min-width: 120px;"></th>
+    </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Events)
+        {
+            var count = item.EventInvites.Count(e => e.IsApplication);
+
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LocationName)
+                </td>
+                <td>
+                    @item.From.ToString("d")
+                </td>
+                <td>
+                    @item.To.ToString("d")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Region)
+                </td>
+                <td>
+                    @count
+                </td>
+                <td style="min-width: 120px">
+                    @Html.ActionLink("Edit", "Edit", new { id = item.EventID }, new { @class = "btn btn-defult" })
+                    @Html.ActionLink("Delete", "Delete", new { id = item.EventID }, new { @class = "btn btn-defult" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(function() {
+            $('#activeUsers').DataTable({
+                "paging": true,
+                "ordering": true
+            });
+        })
+    </script>
+}

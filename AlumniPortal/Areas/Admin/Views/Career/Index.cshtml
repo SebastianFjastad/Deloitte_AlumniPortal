@@ -1,0 +1,75 @@
+﻿@using AlumniPortal.Utilities
+@model List<Career>
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
+</p>
+
+<table id="careersTable" class="table">
+    <thead>
+    <tr>
+        <th>
+            Title
+        </th>
+        <th>
+            Position
+        </th>
+        <th>
+            Body
+        </th>
+        <th>
+            Taleo Link
+        </th>
+        <th>
+            Created date
+        </th>
+        <th style="min-width: 120px"></th>
+    </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => c.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => c.Position)
+                </td>
+                <td>
+                    @{
+                        var body = c.Body.Truncate(200);
+                    }
+                    @HtmlStripper.Strip(body)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => c.TaleoLink)
+                </td>
+                <td>
+                    @c.CreatedDate.ToString("d")
+                </td>
+                <td style="min-width: 120px">
+                    @Html.ActionLink("Edit", "Edit", new { id = c.CareerId }, new { @class = "btn btn-default" })
+                    @Html.ActionLink("Delete", "Delete", new { id = c.CareerId }, new { @class = "btn btn-default" })
+                </td>
+            </tr>
+                        }
+    </tbody>
+</table>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(function() {
+            $('#careersTable').DataTable({
+                "paging": true,
+                "ordering": true
+            });
+        })
+    </script>
+}

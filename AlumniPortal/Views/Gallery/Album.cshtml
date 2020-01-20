@@ -1,0 +1,212 @@
+﻿@using System.Activities.Statements
+@using WebGrease.Css.ImageAssemblyAnalysis
+@model AlumniPortal.Entities.Album
+
+@{
+    ViewBag.Title = Model.Name;
+}
+
+<style type="text/css">
+    .headingPrimary {
+        text-align: center;
+        color: rgb(3, 65, 128);
+        font-weight: bolder;
+    }
+
+    .hr {
+        margin-top: 10px;
+        margin-bottom: 15px;
+        border-color: lightgrey;
+    }
+
+    .albumImage {
+        margin-right: 10px;
+        margin-bottom: 10px;
+        width: 180px;
+        height: 150px;
+        cursor: pointer;
+    }
+
+    .viewMoreContainer {
+        width: 120px;
+        padding: 5px 0 2px 5px;
+        padding-left: 10px;
+        background-color: rgba(123, 237, 37, 0.6);
+        font-size: 20px;
+        font-weight: bolder;
+        color: white;
+        cursor: pointer;
+    }
+
+    .swipeNav {
+        position: absolute;
+        top: 120px;
+        background-color: rgba(123, 237, 37, 0.7) !important;
+        opacity: 0.7;
+        z-index: 999;
+        padding: 3px 5px 3px 5px;
+        color: white;
+        font-weight: normal;
+        cursor: pointer;
+    }
+
+    .swipeLeft {
+        float: left;
+        left: 3px;
+    }
+
+    .swipeRight {
+        float: right;
+        right: 3px;
+    }
+
+    .albumDate, .albumDay {
+        position: relative;
+        color: #fff;
+        font-weight: 700;
+        background-color: rgba(0, 227, 255, 0.26);
+        z-index: 999;
+        text-align: center;
+    }
+
+    .albumDay {
+        text-decoration: underline;
+        font-size: 20px;
+        padding: 0 5px 0 5px;
+    }
+
+    .albumDate {
+        font-size: 10px;
+        padding: 0 5px 10px 5px;
+    }
+
+    .dateContainer {
+        width: 50px;
+        float: left;
+        margin-right: -15px;
+        margin-top: 67px;
+    }
+
+    .hr {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+</style>
+
+<div class="dateContainer">
+    <div class="albumDay">7</div>
+    <div class="albumDate">JUL</div>
+</div>
+<div class="row">
+    <div class="col-sm-8">
+        <h3 class="headingPrimary">@Model.Name</h3>
+
+        <hr class="hr" />
+        <div id="imagesContainer" class="form-group">
+            @foreach (var image in Model.Images.Take(9))
+            {
+                var i = 0;
+                <img src="~/Assets/Albums/@image.AssetName" alt="image" class="albumImage" data-index="@i" />
+                i++;
+            }
+        </div>
+        <div class="form-group text-center">
+            <div class=" col-xs-4 col-xs-offset-4 viewMoreContainer">
+                <span>MORE</span>
+                <span class="glyphicon glyphicon-chevron-down" style="padding-top: 3px; margin-left: 5px;"></span>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-sm-3" style="margin-top: 15px; min-width: 242px;">
+        @Html.Action("Calendar", "Events", new { isVertical = true })
+        @Html.Action("GalleryPartial", "Gallery")
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">Image preview</h4>
+            </div>
+            <div class="modal-body">
+
+                <!-- Body -->
+                <div class="swipeNav swipeLeft"><span class="glyphicon glyphicon-chevron-left"></span></div>
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        @foreach (var image in Model.Images)
+                        {
+                            <div class="swiper-slide">
+                                <div style="background: url(@Url.Content("~/Assets/Albums/" + image.AssetName)) no-repeat center center; background-size: cover; height: 300px; width: 600px;"></div>
+                            </div>
+                        }
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+                <div class="swipeNav swipeRight"><span class="glyphicon glyphicon-chevron-right"></span></div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(function () {
+
+            var swiper = new Swiper('.swiper-container', {
+                pagination: '.swiper-pagination',
+                paginationClickable: true,
+                nextButton: '.swipeRight',
+                prevButton: '.swipeLeft'
+            });
+
+            //list of all images in album
+            var images = [];
+
+            @foreach (var img in Model.Images)
+            {
+                @:images.push("@img.AssetName")
+                         }
+
+            $('.viewMoreContainer').on('click', function () {
+
+                var imagesToDisplay = [];
+
+                //get the count of visible images
+                var visibleImagesCount = $('.albumImage').length;
+
+                //get the images after the index of visible images
+                for (var i = visibleImagesCount; i < visibleImagesCount + 6; i++) {
+                    if (images[i]) {
+                        imagesToDisplay.push("<img src=\"@Url.Content("~/Assets/Albums/")" + images[i] + "\" class=\"albumImage\">");
+                    } else {
+                        break;
+                    }
+                }
+                $('#imagesContainer').append(imagesToDisplay);
+            });
+
+            function reinitSwiper(s) {
+                setTimeout(function () {
+                    s.reInit();
+                }, 200);
+            }
+
+            //open modal and load swiper
+            $(".albumImage").on("click", function () {
+                //var elementIndex = $(".albumImage").index(this);
+                $('#imagemodal').modal('show');
+                reinitSwiper(swiper);
+            });
+        })
+    </script>
+}

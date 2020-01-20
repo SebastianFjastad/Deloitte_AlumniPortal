@@ -1,0 +1,218 @@
+﻿@model AlumniViewModel
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+@using (Html.BeginForm("Edit", "Alumni", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Alumnus</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @*hidden form fields*@
+        @Html.HiddenFor(model => model.Alumnus.AlumnusID)
+        @Html.HiddenFor(model => model.Alumnus.ProfileLink)
+        @Html.HiddenFor(model => model.Alumnus.UserId)
+
+        @{
+            if (Model.Alumnus != null && Model.Alumnus.Asset != null)
+            {
+                <div class="form-group" id="currentImage">
+                    <div class="col-sm-offset-2">
+                        <div class="col-sm-2">
+                            <img src="~/Assets/Alumni/@Model.Alumnus.Asset.AssetName" alt="image" width="300" height="200" />
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+        @Html.Partial("_ImageUpload")
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Alumnus.FirstName, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Alumnus.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Alumnus.FirstName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Alumnus.LastName, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Alumnus.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Alumnus.LastName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Alumnus.Email, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Alumnus.Email, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Alumnus.Email, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Alumnus.PhoneNumber, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Alumnus.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Alumnus.PhoneNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Alumnus.JobTitle, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Alumnus.JobTitle, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Alumnus.JobTitle, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Alumnus.Website, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Alumnus.Website, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Alumnus.Website, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.Alumnus.Interview, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Alumnus.Interview, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-success" />
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="form-group">
+            <h3>Link profile</h3>
+            <p>Link the alumnus profile to their user profile</p>
+        </div>
+
+        @{
+            bool isLinked = Model.Alumnus != null && Model.Alumnus.User != null;
+            string linkedClass = isLinked ? "glyphicon-ok" : "glyphicon-remove";
+        }
+
+        <div class="form-group">
+            <label>Currently linked : <span class="glyphicon @linkedClass"></span></label>
+        </div>
+
+        @if (Model.Alumnus.User != null)
+        {
+            <div class="form-group">
+                <label>Name : @Model.Alumnus.User.FirstName @Model.Alumnus.User.LastName</label>
+                <br/>
+                <label>Email : @Model.Alumnus.User.Email</label>
+            </div>
+        }
+
+        <hr />
+
+        <div class="form-group">
+            <label class="control-label col-md-3" for="searchTerm">Find alumnus profile to link</label>
+            <div class="col-md-3">
+                <input id="searchTerm" class="form-control" type="text" placeholder="Search by name" />
+            </div>
+            <div class="col-md-3">
+                <input id="search" type="button" value="Search" class="btn btn-default" style="margin-left: 15px;" />
+            </div>
+        </div>
+
+        <table class="table table-condensed" style="width: 50%">
+            <thead>
+                <tr>
+                    <td style="width: 200px!important"><div style="width: 200px">First Name</div></td>
+                    <td style="width: 200px!important"><div style="width: 200px">Last Name</div></td>
+                    <td style="width: 200px!important"><div style="width: 200px">Email</div></td>
+                    <td style="width: 200px!important"><div style="width: 200px"></div>Link</td>
+                </tr>
+            </thead>
+            <tbody id="searchResults"></tbody>
+        </table>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-success" />
+            </div>
+        </div>
+    </div>
+            }
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+@section scripts{
+    <script src="~/scripts/tinymce/tinymce.min.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+
+            $('#search').on('click', function () {
+                var term = $('#searchTerm').val();
+                if (term.length > 3) {
+                    $.ajax({
+                        url: '@Url.Action("FindUser", "Alumni", new {area = "Admin"})',
+                        type: 'Get',
+                        dataType: "json",
+                        contentType: "application/json",
+                        traditional: true,
+                        data: { term: term },
+                        success: function (data) {
+                            var result = '';
+                            $.each(data, function (i, item) {
+                                result += "<tr data-userid='" + item.Id + "'><td>" + item.FirstName + "</td><td>" + item.LastName + "</td><td>" + item.Email + "</td><td><input type='checkbox' class='checkbox'/></td></tr>";
+                            });
+
+                            $('#searchResults').html(result);
+                        },
+                        error: function () {
+                            $('#searchResults').html("<tr><td>Sorry, we couldn't find anyone by that name</td></tr>");
+                        }
+                    });
+                }
+            });
+
+            $('#searchResults').on('click', '.checkbox', function (e) {
+                var that = $(this);
+
+                $('tbody tr td input[type="checkbox"]').each(function () {
+                    $(this).prop('checked', false);
+                });
+
+                that.prop('checked', true);
+
+                var id = that.closest('tr').data("userid");
+                var link = '/FindUser?id="' + id + '"';
+                $('#Alumnus_ProfileLink').val(link);
+                $('#Alumnus_UserId').val(id);
+            });
+
+            tinyMCE.init({
+                mode: "textareas",
+                theme: "modern",
+                theme_advanced_buttons1: "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,styleselect,formatselect,fontselect,fontsizeselect",
+                theme_advanced_buttons2: "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,cleanup,help,code,|,insertdate,inserttime,preview,|,forecolor,backcolor",
+                theme_advanced_buttons3: "tablecontrols,|,hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,media,advhr,|,print,|,ltr,rtl,|,fullscreen",
+                theme_advanced_buttons4: "insertlayer,moveforward,movebackward,absolute,|,styleprops,spellchecker,|,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,template,blockquote,pagebreak,|,insertfile,insertimage",
+                theme_advanced_toolbar_location: "top",
+                theme_advanced_toolbar_align: "left",
+                theme_advanced_statusbar_location: "bottom",
+                theme_advanced_resizing: true
+            });
+        });
+    </script>
+}

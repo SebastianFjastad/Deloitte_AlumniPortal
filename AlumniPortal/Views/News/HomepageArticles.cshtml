@@ -1,0 +1,125 @@
+﻿@using AlumniPortal.Entities
+@using AlumniPortal.Models
+@using AlumniPortal.Utilities
+@model List<Article>
+
+<style type="text/css">
+    .swiper-wrapper {
+        margin: 0 auto;
+        background-color: rgb(241, 241, 241);
+    }
+
+    .previewContainer {
+        padding: 10px 0 0 10px;
+        color: rgb(141, 141, 141);
+        background-color: rgb(241, 241, 241);
+        height: 270px;
+    }
+
+    .hr {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        border-color: lightgrey;
+    }
+
+    .articleTitle {
+        margin-top: 10px;
+        font-weight: bold;
+        font-size: 25px;
+        text-align: center;
+        color: rgb(117, 115, 115);
+    }
+
+    .swipeNav {
+        position: absolute;
+        top: 120px;
+        background-color: rgba(123, 237, 37, 0.7) !important;
+        opacity: 0.7;
+        z-index: 999;
+        padding: 3px 5px 3px 5px;
+        color: white;
+        font-weight: normal;
+    }
+
+    .swipeLeft {
+        float: left;
+        left: 3px;
+    }
+
+    .swipeRight {
+        float: right;
+        right: 3px;
+    }
+
+    .newsViewArticle {
+        color: white;
+        display: block;
+        float: right;
+        margin-right: -20px;
+        right: 0;
+        text-decoration: none;
+        cursor: pointer!important;
+    }
+    .newsViewArticle:hover {
+        color: white;
+        text-decoration: none;
+    }
+</style>
+
+<div class="swipeNav swipeLeft"><span class="glyphicon glyphicon-chevron-left"></span></div>
+
+<div class="swiper-container">
+    <div class="swiper-wrapper">
+        @foreach (var a in Model.Take(3))
+        {
+            <div class="swiper-slide">
+
+                @*Article Preview for larger screens*@
+                <div class="col-md-5 hidden-sm hidden-xs" style="height: 270px; padding-left: 0; padding-right: 0;">
+                    <div class="previewContainer">
+                        <a href="@Url.Action("Article", "News", new {id = a.ArticleID})" style="text-decoration: none">
+                            <h4 class="articleTitle">@a.Title</h4>
+                        </a>
+                        <hr class="hr" />
+                        <div>
+                            @Html.Raw(a.Body.Truncate(300)) ...
+                        </div>
+                    </div>
+                    <a href="@Url.Action("Article", "News", new {id = a.ArticleID})" class="viewMoreContainer newsViewArticle">
+                        ARTICLE
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                    </a>
+                </div>
+
+                @*Article image for larger screens*@
+                <div class="col-md-7 hidden-sm hidden-xs" style="background: url(Assets/Articles/@a.Assets.First(f => f.FileType == FileType.ArticleImage).AssetName) no-repeat center center; background-size: cover; height: 270px">
+                </div>
+
+                @*Article image for smaller screens*@
+                <div class="col-md-7 hidden-md hidden-lg" style="background: url(Assets/Articles/@a.Assets.First(f => f.FileType == FileType.ArticleImage).AssetName) no-repeat center center; background-size: cover; height: 270px">
+                </div>
+
+                @*Article Preview for smaller screens*@
+                <div class="col-md-5 hidden-md hidden-lg" style="height: 270px;  padding-left: 0; padding-right: 0;">
+                    <div class="previewContainer">
+                        <a href="@Url.Action("Article", "News", new {id = a.ArticleID})" style="text-decoration: none">
+                            <h4 class="articleTitle">@a.Title</h4>
+                        </a>
+                        <hr class="hr" />
+                        <div>
+                            @Html.Raw(a.Body.Truncate(300)) ...
+                        </div>
+                    </div>
+                    <a href="@Url.Action("Article", "News", new {id = a.ArticleID})" class="viewMoreContainer newsViewArticle">
+                        ARTICLE
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="swiper-pagination"></div>
+</div>
+
+<div class="swipeNav swipeRight"><span class="glyphicon glyphicon-chevron-right"></span></div>

@@ -1,0 +1,233 @@
+﻿@model AlumniPortal.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_NotAuthLayout.cshtml";
+}
+
+<style type="text/css">
+       .loginContainer {
+        background-color: rgba(230, 230, 230, 0.98);
+        height: auto;
+        margin-bottom: 40px;
+        margin-top: 40px;
+    }
+
+    .logoContainer img {
+        width: 55%;
+        height: 100%;
+    }
+
+    .logoContainer {
+        margin-top: 15px;
+    }
+
+    .hr {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        border-color: lightgrey;
+    }
+
+    .logonLabel {
+        text-align: center;
+    }
+
+        .logonLabel h3 {
+            text-transform: uppercase;
+        }
+
+        .logonLabel h4 {
+            color: rgb(113, 109, 109);
+        }
+
+    .greyLabel {
+        color: rgb(113, 109, 109);
+    }
+
+    .leadLable {
+        color: rgb(36, 95, 216);
+        font-weight: bolder;
+        margin-top: 0;
+    }
+
+    #registerForm {
+        text-align: center;
+    }
+
+        #registerForm a:hover {
+            text-decoration: none;
+            color: #337ab7;
+        }
+
+    input[type="text"], input[type="password"] {
+        border: 1px solid rgb(183, 183, 183) !important;
+        color: rgb(113, 109, 109);
+    }
+
+    input[type="submit"] {
+        border: 1px solid grey;
+        color: grey;
+    }
+
+    .registerBtn {
+        background-color: rgb(36, 95, 216);
+        color: white !important;
+        border: rgb(36, 95, 216) !important;
+        padding: 10px 40px;
+        border-radius: 0;
+    }
+
+        .registerBtn:hover, .registerBtn:hover:active {
+            background-color: rgb(30, 77, 172);
+        }
+
+    .socialLogonButton {
+        color: rgb(113, 109, 109);
+        background-color: rgb(183, 183, 183);
+        font-size: 15px;
+    }
+    .socialLogonButton:hover {
+        background-color: rgb(205, 202, 202);
+        border-color: rgb(205, 202, 202);
+        color: rgb(113, 109, 109);
+    }
+
+    .registerLink a {
+        color: rgb(113, 109, 109);
+    }
+
+        .registerLink a:hover {
+            text-decoration: none;
+            color: rgb(71, 70, 70)!important;
+        }
+
+    .form-control {
+        display: inline-block;
+        /*min-width: 100%;*/
+    }
+
+    .inputAlign {
+        width: 65%;
+        margin: 10px auto !important;
+    }
+
+    .navMain, .navSmall {
+        display: none;
+    }
+
+    .checkbox label {
+        color: rgb(113, 109, 109);
+    }
+
+    .inlineblockNonMobile {
+        display: inline-block;
+    }
+
+    .text-danger {
+        width: 171px;
+        margin: 0 auto;
+    }
+
+    @@media screen and (max-width: 430px) {
+        .inputAlign {
+            width: 90%;
+        }
+
+        .logoContainer img {
+            width: 70%;
+        }
+
+        .blockMobile {
+            display: block;
+        }
+    }
+</style>
+
+<div class="row">
+    <div class="col-xs-10 col-sm-8 col-xs-offset-1 col-sm-offset-2">
+        <div class="row loginContainer">
+
+            <div class="col-xs-12">
+                <div class="text-center logoContainer">
+                    <img src="~/Content/Alumni-Logo.png" height="50" width="300">
+                    <hr class="hr" />
+                </div>
+            </div>
+
+            <div class="col-xs-12">
+                <div class="logonLabel">
+                    <h3 class="leadLable">@ViewBag.Title</h3>
+                </div>
+            </div>
+
+            <div class="col-xs-12">
+                <section id="registerForm">
+                    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new {@class = "form-horizontal", role = "form"}))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary("", new {@class = "text-danger"})
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                @Html.TextBoxFor(m => m.Email, new {@class = "form-control", @placeholder = "Email"})
+                                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                @Html.TextBoxFor(m => m.UserName, new {@class = "form-control", @placeholder = "Username"})
+                                @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                @Html.PasswordFor(m => m.Password, new {@class = "form-control", @placeholder = "Password"})
+                                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                @Html.PasswordFor(m => m.ConfirmPassword, new {@class = "form-control", @placeholder = "Confirm password"})
+                                @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                @Html.TextBoxFor(m => m.FirstName, new {@class = "form-control", @placeholder = "First name"})
+                                @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                @Html.TextBoxFor(m => m.LastName, new {@class = "form-control", @placeholder = "Last name"})
+                                @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                @Html.TextBoxFor(m => m.IdNumber, new {@class = "form-control", @placeholder = "ID number"})
+                                @Html.ValidationMessageFor(m => m.IdNumber, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <input type="submit" class="btn btn-default registerBtn" value="Register"/>
+                            </div>
+                        </div>
+                    }
+
+                </section>
+            </div>
+
+            <div class="col-xs-12 text-center">
+                <h3 class="leadLable">ALREADY REGISTERED?</h3>
+                <h4 class="registerLink">
+                    @Html.ActionLink("Log in", "Login")
+                </h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

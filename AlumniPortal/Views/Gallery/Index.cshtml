@@ -1,0 +1,87 @@
+﻿@model  AlumniPortal.Models.GalleryViewModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<style type="text/css">
+    .albumContainer {
+        float: left;
+        display: block;
+        cursor: pointer;
+        margin-right: 15px;
+        margin-bottom: 15px;
+    }
+
+    .albumContainer a:hover{
+        text-decoration: none;
+        color: #fff;
+    }
+
+    .headingPrimary {
+        text-align: center;
+        color: rgb(3, 65, 128);
+        font-weight: bolder;
+    }
+
+    .hr {
+        margin-top: 10px;
+        margin-bottom: 15px;
+        border-color: lightgrey;
+    }
+
+
+    .galleryView {
+        color: white;
+        display: block;
+        float: right;
+        margin-top: 52.5%;
+    }
+
+    .detailsBarAlbum {
+        position: relative;
+        background-color: rgba(0,0,0, 0.4);
+        height: 42px;
+        bottom: -150px;
+        color: rgb(241, 241, 241);
+    }
+
+    .detailsBarTitle {
+        color: white;
+        padding-left: 7px;
+        padding-top: 3px;
+        font-size: 15px;
+    }
+
+    .detailsBarDate {
+        color: white;
+        padding-left: 7px;
+        font-size: 11px;
+    }
+</style>
+
+<div class="row">
+    <div class="col-sm-8">
+        <h3 class="headingPrimary">EVENT GALLERIES</h3>
+        <hr class="hr"/>
+        @foreach (var album in Model.Albums)
+        {
+            if (album.CoverImage != null)
+            {
+                <div class="albumContainer" style="background: url(@Url.Content("~/Assets/Albums/" + album.CoverImage.AssetName)) no-repeat center center; background-size: cover; width: 300px;">
+                    <div class="detailsBarAlbum">
+                        <div class="detailsBarTitle">@album.Name</div>
+                        <div class="detailsBarDate">@album.CreatedDate.ToString("M") @album.CreatedDate.ToString("yyyy")</div>
+                    </div>
+                    <a href="@Url.Action("Album", "Gallery", new {id = album.AlbumId})" class="viewMoreContainer galleryView">
+                        <span>VIEW EVENT</span>
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                    </a>
+                </div>
+            }
+        }
+    </div>
+    <div class="col-sm-3" style="margin-top: 15px; min-width: 242px;">
+        @Html.Action("Calendar", "Events", new { isVertical = true })
+        @Html.Action("GalleryPartial", "Gallery")
+    </div>
+</div>

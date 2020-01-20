@@ -1,0 +1,75 @@
+﻿@using AlumniPortal.Utilities
+@model IEnumerable<AlumniPortal.Models.RSSItem>
+
+<style type="text/css">
+    .blogContainer {
+        float: left;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color: rgb(117, 115, 115);
+    }
+
+    .blogTitle {
+        font-weight: 700;
+        font-size: 14px;
+        margin-left: 10px;
+        margin-right: 10px;
+        color: rgb(117, 115, 115) !important;
+    }
+
+    .blogBody {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    .blogDate, .blogDay {
+        position: relative;
+        color: #fff;
+        font-weight: 700;
+        background-color: rgba(0, 227, 255, 0.5);
+        z-index: 999;
+        text-align: center;
+    }
+
+    .blogDay {
+        text-decoration: underline;
+        font-size: 20px;
+        padding: 0 5px 0 5px;
+    }
+
+    .blogDate {
+        font-size: 10px;
+        padding: 0 5px 10px 5px;
+    }
+
+    .dateContainer {
+        width: 50px;
+        float: right;
+        position: absolute;
+        top: 0;
+    }
+
+    .hr {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+</style>
+
+@foreach (var blog in Model)
+{
+    <div class="col-xs-6 col-md-4">
+        <div class="row">
+            <div class="blogContainer">
+                <div style="background: url(@blog.ImageUrl) no-repeat center center; background-size: cover; height: 150px; width: 100%"></div>
+                <div class="dateContainer">
+                    <div class="blogDay">@blog.PubDate.Truncate(3)</div>
+                    <div class="blogDate">@blog.PubDate.Substring(4, 7)</div>
+                </div>
+                <a href="@blog.Link">
+                    <h6 class="blogTitle">@blog.Title</h6>
+                </a>
+                <hr class="hr" />
+                <div class="blogBody">@blog.Description.Truncate(200)</div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,71 @@
+﻿@model AlumniPortal.Models.AlumniViewModel
+
+@foreach (var user in Model.Users)
+            {
+                var imgPath = "";
+
+                if (user.ProfilePic != null)
+                {
+                    imgPath = "/Assets/Alumni/" + user.ProfilePic.AssetName;
+                }
+                else
+                {
+                    imgPath = "http://www.corporatetraveller.ca/assets/images/profile-placeholder.gif";
+                }
+
+                <div class="col-sm-6 col-md-4">
+                    <div class="profileContainer profileUserContainer" data-userid="@user.Id" style="background: url(@imgPath) no-repeat center center; background-size: cover;">
+
+                        <div class="backgroundGradient">
+
+                            <div class="featuredContainerBlank"></div>
+
+                            @*profile pic*@
+                            <img src="@imgPath" class="img-circle" alt="profile pic" width="70" height="70" />
+
+                            @*name*@
+                            <div class="headingPrimary">@user.FirstName @user.LastName</div>
+
+                            @*job title *@
+                            @if (!string.IsNullOrEmpty(user.JobTitle))
+                            {
+                                <div class="jobTitle">@user.JobTitle</div>
+                            }
+                            else
+                            {
+                                <div class="blank"></div>
+                            }
+
+                            @*contact number*@
+                            @if (user.AllowPubPhoneNo)
+                            {
+                                <div class="subText"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>@user.PhoneNumber</div>
+                            }
+                            else
+                            {
+                                <div class="blank"></div>
+                            }
+
+                            @*email*@@if (user.AllowPubEmail)
+                            {
+                                <div class="subText"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> @user.Email</div>
+                            }
+                            else
+                            {
+                                <div class="blank"></div>
+                            }
+                            @*full profile button*@
+                            <hr />
+                            <div class="boxCenter">
+                                <div class="whiteGap">
+                                    <a href="@Url.Action("Alumnus", "Alumni", new {alumnusId = user.Id, isFeatured = true})">
+                                        <div class="fullProfile">
+                                            FULL PROFILE
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+}

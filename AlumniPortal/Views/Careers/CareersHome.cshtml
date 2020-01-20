@@ -1,0 +1,54 @@
+﻿@model List<AlumniPortal.Entities.Career>
+
+<style type="text/css">
+    .careersContainer {
+        background-color: rgb(3, 65, 128);
+        padding: 10px;
+        padding-bottom: 0;
+        color: white;
+    }
+
+    .careersTitle {
+        margin-top: 10px;
+    }
+
+    .careersBody {
+        margin: 5px 0 10px 0;
+    }
+
+    .careerTitle {
+        padding: 3px 10px 3px 10px;
+        margin: 1px 0 1px 0;
+        font-size: 14px;
+    }
+
+    .careerTitleContainer {
+        background-color: rgba(123, 237, 37, 0.6);
+        margin-left: -10px;
+        display: inline-block;
+    }
+
+    .viewMoreCareers {
+        right: 0;
+    }
+</style>
+
+<div class="col-xs-12 form-group careersContainer">
+    <h3 class="careersTitle">Careers at Deloitte</h3>
+    <hr class="hr" />
+
+    @foreach (var c in Model)
+    {
+        <div class="careerTitleContainer">
+            <h4 class="careerTitle">@c.Title</h4>
+        </div>
+        <div class="careersBody">
+            @c.Body
+        </div>
+
+    }
+    <div class="viewMoreContainer viewMoreCareers">
+        <span>CAREERS</span>
+        <span class="glyphicon glyphicon-chevron-right"></span>
+    </div>
+</div>

@@ -1,0 +1,15 @@
+﻿@using AlumniPortal.Controllers
+
+@{
+    ViewBag.Title = "ExternalLoginNotValidated";
+    Layout = "~/Views/Shared/_NotAuthLayout.cshtml";
+}
+
+<h2>Registration Varification</h2>
+
+<p>Thank you for registering with the Deloitte Alumni platform!</p>
+<p>We were unable to varify your details at the moment.</p>
+<p>An Admin will review your application and process it.</p>
+<p>Please contact us if you have any queries.</p>
+
+@Html.ActionLink("Home", "Index", "Home", null, new { @class = "btn btn-primary"})

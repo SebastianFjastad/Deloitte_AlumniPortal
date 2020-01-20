@@ -1,0 +1,138 @@
+﻿body {
+    /*padding-top: 65px;*/
+    padding-bottom: 20px;
+}
+
+html,body{
+    height: 100%;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+/* styles for calendar */
+
+/*style for day with event*/
+
+.ui-datepicker-calendar {
+    max-width: 260px;
+    height: 200px;
+    /*border: 1px solid #ccc;*/
+    color: rgb(136, 136, 136);
+    font-size: 13px;
+}
+
+.ui-datepicker-inline {
+    height: 250px;
+    background-color: #cfcece;
+}
+
+.ui-datepicker {
+}
+
+    .ui-datepicker table {
+        width: 100%;
+        height: 160px;
+    }
+
+        .ui-datepicker table td {
+            text-align: center;
+            padding-top: 5px;
+            padding-bottom: 3px;
+        }
+
+    .ui-datepicker a {
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .ui-datepicker th {
+        text-align: center;
+        color: white;
+    }
+
+.ui-datepicker-month {
+    color: white;
+    font-size: 20px;
+}
+
+.ui-datepicker-year {
+    color: white;
+    font-size: 20px;
+}
+
+.ui-datepicker-header {
+    padding: 10px;
+}
+
+.ui-datepicker-prev {
+    float: left;
+}
+
+.ui-datepicker-next {
+    float: right;
+}
+
+.ui-datepicker-title {
+    text-align: center;
+    font-weight: bold;
+}
+/*.ui-datepicker-current-day*/
+.ui-datepicker-today {
+    color: white;
+}
+
+.hasEvent {
+    background-image: none !important;
+    background-color: #7bed25 !important;
+    opacity: 0.7;
+    border-radius: 4px;
+}
+.inEvent {
+    background-image: none !important;
+    background-color:  rgba(0, 227, 255, 0.26);
+    border-radius: 4px;
+}
+.appliedToEvent {
+    background-image: none !important;
+    background-color: rgb(151, 151, 151) !important;
+    border-radius: 4px;
+}
+
+.hasEvent a {
+    color: white !important;
+}
+
+.inEvent a {
+    color: white !important;
+}
+
+.appliedToEvent a {
+    color: white !important;
+}
+
+.ui-datepicker-unselectable {
+    width: 10px!important;
+}
+ .ui-state-disabled {
+    width: 10px!important;
+}
+
+

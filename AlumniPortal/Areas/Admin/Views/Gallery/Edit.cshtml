@@ -1,0 +1,153 @@
+﻿@model Album
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<style type="text/css">
+    #dropzoneForm {
+        background: gray !important;
+        border: black dashed 3px !important;
+        width: 200px !important;
+        padding: 50px !important;
+        text-align: center !important;
+        color: white !important;
+    }
+
+    #imageGallery img {
+        display: inline-block;
+        max-width: 120px;
+        max-height: 120px;
+        margin: 5px;
+    }
+
+    .imageContainer {
+        float: left; 
+        margin: 10px;
+    }
+    .deleteImage {
+        float: right;
+    }
+
+</style>
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm("Edit", "Gallery", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(model => model.AlbumId)
+
+    <div class="form-horizontal">
+        <h4>Album</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CreatedDate, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.CreatedDate, new { @class = "form-control col-md-10" })
+            </div>
+        </div>
+
+        @{
+    if (Model != null && Model.CoverImage != null)
+    {
+        <div class="form-group" id="currentImage">
+            <div class="col-sm-offset-2">
+                <div class="col-sm-10">
+                    <h3>Album cover</h3>
+                    <img src="~/Assets/Albums/@Model.CoverImage.AssetName" alt="image" width="300" height="200" />
+                </div>
+            </div>
+        </div>
+    }
+        }
+
+        @Html.Partial("_ImageUpload")
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-success" />
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col-xs-12 form-group">
+        <div id="imageGallery">
+
+        </div>
+    </div>
+</div>
+
+<div class="jumbotron">
+
+    <form action="~/Admin/Gallery/SaveImages?id=@Model.AlbumId" class="dropzone" id="dropzoneJsForm"></form>
+
+    <button id="submit-all">Submit All Files</button>
+
+</div>
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section scripts{
+
+    <script type="text/javascript">
+        $(function() {
+
+            //delete image
+            $('#imageGallery').on('click', '.deleteImage', function() {
+                var that = $(this);
+                var id = that.data('assetid');
+                $.ajax({
+                    url: '@Url.Action("DeleteImage", "Gallery")',
+                    type: 'Get',
+                    data: { id: id },
+                    success: function () {
+                        that.closest('.imageContainer').remove();
+                    }
+                });
+            });
+
+            function LoadImages() {
+                $('#imageGallery').load("@Url.Action("LoadImages")", { id: @Model.AlbumId });
+            }
+
+            LoadImages();
+
+            Dropzone.options.dropzoneJsForm = {
+                acceptedFiles: "image/*",
+                autoProcessQueue: false,
+                addRemoveLinks: true,
+
+                init: function() {
+                    var submitButton = document.querySelector("#submit-all");
+                    var myDropzone = this; //closure
+
+                    submitButton.addEventListener("click", function() {
+                        myDropzone.processQueue();
+                    });
+
+                    this.on('complete', function() {
+                        if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+                            location.reload();
+                        }
+                    });
+                }
+            };
+        });
+    </script>
+}

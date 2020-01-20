@@ -1,0 +1,81 @@
+﻿@using Microsoft.AspNet.Identity
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<style type="text/css">
+    .viewMoreContainer {
+        cursor: pointer;
+        position: absolute;
+        padding: 2px 5px 2px 5px;
+        padding-left: 10px;
+        bottom: 0;
+        background-color: rgba(123, 237, 37, 0.6);
+        font-size: 20px;
+        font-weight: bolder;
+        color: white;
+    }
+</style>
+
+<div class="row form-group">
+    <div class="col-xs-12">
+        @Html.Action("HomepageArticles", "News")
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6 col-md-3 form-group">
+        <div class="">
+            @Html.Action("GalleryPartial", "Gallery")
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3 form-group">
+        <div class="">
+            @Html.Action("YoutubeVid", "News")
+        </div>
+    </div>
+    <div class="col-md-6 form-group">
+        @Html.Action("Calendar", "Events")
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-5">
+        @Html.Action("CareersHome", "Careers")
+    </div>
+    <div class="col-md-7">
+        @Html.Action("BlogPosts", "Home")
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(function() {
+            var swiper = new Swiper('.swiper-container', {
+                pagination: '.swiper-pagination',
+                paginationClickable: true,
+                nextButton: '.swipeRight',
+                prevButton: '.swipeLeft'
+            });
+        });
+
+        function AttendEvent(isApplication) {
+            var eventId = $('.eventIdCalendar').text();
+            var userId = $('#userId').data('userid');
+            isApplication = typeof isApplication !== 'undefined' ? isApplication : false;
+
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: '@Url.Action("AttendEvent", "Events")',
+                contentType: 'application/json',
+                traditional: true,
+                data: { userId: userId, eventId: eventId, isApplication: isApplication },
+                success: function (result) {
+                    window.location.reload();
+                }
+            });
+        }
+    </script>
+}

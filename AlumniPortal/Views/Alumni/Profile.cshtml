@@ -1,0 +1,475 @@
+﻿@using AlumniPortal.Models
+@model ApplicationUser
+
+@{
+    ViewBag.Title = "Profile";
+}
+
+<style type="text/css">
+    .hr {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        border-color: lightgrey;
+        color: rgb(141, 141, 141);
+        border-top: 1px solid #CECDCD;
+    }
+
+    .headingPrimary {
+        text-align: center;
+        font-size: large;
+        color: rgb(3, 65, 128);
+        font-weight: bolder;
+        margin-bottom: 0;
+        margin-top: 10px;
+        text-transform: uppercase;
+    }
+
+    .profileContainer {
+        width: 100%;
+        text-align: center;
+    }
+
+    .updateButton {
+        width: 100px;
+        padding: 10px 10px;
+        font-size: 14px;
+        font-weight: bolder;
+        color: white;
+        background-color: rgb(36, 95, 216);
+        border: rgb(36, 95, 216);
+        border-radius: 0;
+    }
+
+        .updateButton:hover {
+            background-color: rgb(30, 77, 172);
+        }
+
+    .jobTitle {
+        color: rgb(113, 109, 109);
+        font-weight: bolder;
+    }
+
+    .secondaryTitle {
+        color: rgb(113, 109, 109);
+        font-weight: bolder;
+        margin-top: 30px;
+        font-size: 16px;
+    }
+
+    .subText {
+        color: rgb(141, 141, 141);
+        margin-top: 5px;
+    }
+
+        .subText > .glyphicon {
+            margin-right: 10px;
+        }
+
+    .aboutBody {
+        color: rgb(141, 141, 141);
+        margin-top: 15px;
+        text-align: left;
+    }
+
+    .boxCenter {
+        text-align: center;
+        text-align: -webkit-center;
+        position: relative;
+        bottom: 30px;
+    }
+
+    .img-circle {
+        box-shadow: 0 0 0 1px rgb(3, 65, 128), 0 0 0 2px rgb(3, 65, 128), 0 0 0 3px white, 0 0 0 4px white;
+        -moz-box-shadow: 0 0 0 1px rgb(3, 65, 128), 0 0 0 2px rgb(3, 65, 128), 0 0 0 3px white, 0 0 0 4px white;
+        -webkit-shadow: 0 0 0 1px rgb(3, 65, 128), 0 0 0 2px rgb(3, 65, 128), 0 0 0 3px white, 0 0 0 4px white;
+    }
+
+    /*autocomplete styling*/
+    .ui-autocomplete {
+        background: white;
+        border-radius: 0px;
+        width: 162px;
+    }
+
+    .ui-autocomplete-input {
+        margin-top: 10px;
+        padding: 2px 2px 2px 10px;
+        font-size: 16px !important;
+        color: #4a4a4a;
+    }
+
+    ul.ui-autocomplete {
+        padding-left: 10px;
+        list-style-type: none;
+    }
+
+        ul.ui-autocomplete.ui-menu li {
+            font-size: 16px !important;
+            color: #4a4a4a;
+            padding-top: 6px;
+            cursor: pointer;
+        }
+
+            ul.ui-autocomplete.ui-menu li:hover {
+                font-weight: bolder;
+            }
+
+    .connectButton {
+        margin-top: 10px;
+        width: 140px;
+        background-color: rgb(36, 95, 216);
+        color: white !important;
+        border: rgb(36, 95, 216) !important;
+        padding: 7px 10px;
+        border-radius: 0;
+    }
+
+        .connectButton:hover {
+            background-color: rgb(30, 77, 172);
+        }
+
+    input[type="text"], input[type="password"] {
+        border: 1px solid rgb(183, 183, 183) !important;
+        color: rgb(113, 109, 109);
+    }
+
+    .control-label {
+        color: rgb(113, 109, 109);
+    }
+
+    .checkbox label {
+        color: rgb(113, 109, 109);
+    }
+
+    #editProfile {
+        display: none;
+    }
+
+    .aboutLabel {
+        margin-bottom: 15px !important;
+    }
+
+    .deactivateBtn {
+        border-radius: 0;
+    }
+</style>
+
+@{
+    var imgPath = "";
+
+    if (Model.ProfilePic == null)
+    {
+        imgPath = "http://www.corporatetraveller.ca/assets/images/profile-placeholder.gif";
+    }
+    else
+    {
+        imgPath = "/Assets/Alumni/" + Model.ProfilePic.AssetName;
+    }
+}
+
+<div class="row">
+    <div class="col-sm-8" id="viewProfile">
+        <div class="row">
+            <div class="col-xs-8">
+                <h3 class="headingPrimary">Profiles</h3>
+            </div>
+            <div class="col-xs-4">
+                <div class="pull-right">
+                    <input id="alumniSearch" type="text" placeholder="Search" />
+                </div>
+            </div>
+        </div>
+
+        <hr class="hr" />
+
+        <input id="updateButton" class="updateButton" type="button" value="Update" />
+        <div class="profileContainer">
+
+            <img src="@imgPath" class="img-circle" alt="profile pic" width="120" height="120" />
+
+            <div class="headingPrimary">@Model.FirstName @Model.LastName</div>
+
+            <div class="jobTitle">@Model.JobTitle</div>
+
+            @if (Model.AllowPubPhoneNo)
+            {
+            <div class="subText"><span class="glyphicon glyphicon-earphone"></span>@Model.PhoneNumber</div>
+            }
+
+            @if (Model.AllowPubEmail)
+            {
+            <div class="subText"><span class="glyphicon glyphicon-envelope"></span>@Model.Email</div>
+            }
+
+            <div class="secondaryTitle">About @Model.FirstName</div>
+
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    <div class="aboutBody">
+                        @Html.Raw(Model.About)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="editProfile" class="col-sm-8">
+        @using (Html.BeginForm("UpdateProfile", "Alumni", FormMethod.Post, new { @enctype = "multipart/form-data", @class = "form-horizontal" }))
+        {
+            @Html.ValidationSummary()
+            @Html.HiddenFor(m => m.Id)
+
+            //input which holds the image strig to upload to server
+            <input id="croppedImage" name="croppedImage" type="text" style="display: none;" />
+
+            <div id="currImage" class="form-group">
+                <div class="col-sm-6 col-sm-offset-3">
+                    <img src="@imgPath" id="currImg" class="img-circle" alt="profile pic" width="120" height="120" />
+
+                    @*cropped profile pic preview canvas*@
+                    <canvas id="preview" class="img-circle" width="120" height="120" style="overflow: hidden; display: none;"></canvas>
+                </div>
+                <div class="col-sm-6 col-sm-offset-3">
+                    <input id="changePicButton" class="connectButton" type="button" value="Change picture" />
+                </div>
+            </div>
+
+            <div id="changeImage" class="form-group" style="display: none;">
+                <div id="uploadContainer" class="image-cropper col-sm-offset-2 col-xs-10">
+
+                    @*placeholder for the full image preview*@
+                    <img id="imgPreview" src="" class="image" style="max-width: 400px" />
+
+                    @*input which holds the upload from local sys*@
+                    <input id="imgUpload" type="file" name="upload" style="margin-top: 15px; display: inline;" />
+
+                    <input id="clearImage" type="button" value="Clear image" style="display: inline;" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-6 col-sm-offset-3">
+                    @Html.ActionLink("Change password", "ChangePassword", "Manage", null, new { @class = "btn btn-default connectButton" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-6 col-sm-offset-3">
+                    @Html.ActionLink("Manage logins", "ManageLogins", "Manage", null, new { @class = "btn btn-default connectButton" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.FirstName, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.FirstName)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.LastName, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.LastName)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Email)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.PhoneNumber, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.PhoneNumber)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.JobTitle, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.JobTitle, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.JobTitle)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Region, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.Region, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Region)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-9 col-md-offset-2">
+                    <div class="checkbox" style="padding-left: 20px;">
+                        @Html.CheckBoxFor(m => m.AllowPubEmail)
+                        @Html.LabelFor(m => m.AllowPubEmail)
+                        <a class="test" href="#" data-toggle="tooltip" data-placement="top" title="Allow other alumni to view your email address">info</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-9 col-md-offset-2">
+                    <div class="checkbox" style="padding-left: 20px;">
+                        @Html.CheckBoxFor(m => m.AllowPubPhoneNo)
+                        @Html.LabelFor(m => m.AllowPubPhoneNo)
+                        <a class="test" href="#" data-toggle="tooltip" data-placement="top" title="Allow other alumni to view your phone number">info</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-2 text-right">
+                    @Html.LabelFor(m => m.About, new {@class = "control-label aboutLabel"})
+                </div>
+                <div class="col-sm-12">
+                    @Html.TextAreaFor(m => m.About, new {@class = "form-control"})
+                    @Html.ValidationMessageFor(m => m.About)
+                </div>
+            </div>
+
+            <input class="connectButton" type="submit" value="Save changes" style="margin-bottom: 30px;" />
+            <input id="deactivateButton" type="button" class="btn btn-default deactivateBtn pull-right" value="Deactivate account" />
+        }
+
+    </div>
+
+    <div class="col-sm-3" style="margin-top: 15px; min-width: 242px;">
+        @Html.Action("Calendar", "Events", new { isVertical = true })
+        @Html.Action("GalleryPartial", "Gallery")
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/scripts/tinymce/tinymce.min.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#updateButton').click(function () {
+                $('#viewProfile').hide();
+                $('#editProfile').show();
+            });
+
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $('#changePicButton').click(function () {
+                $('#changeImage').show();
+            });
+
+            tinyMCE.init({
+                mode: "textareas",
+                theme: "modern",
+                theme_advanced_buttons1: "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,styleselect,formatselect,fontselect,fontsizeselect",
+                theme_advanced_buttons2: "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,cleanup,help,code,|,insertdate,inserttime,preview,|,forecolor,backcolor",
+                theme_advanced_buttons3: "tablecontrols,|,hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,media,advhr,|,print,|,ltr,rtl,|,fullscreen",
+                theme_advanced_buttons4: "insertlayer,moveforward,movebackward,absolute,|,styleprops,spellchecker,|,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,template,blockquote,pagebreak,|,insertfile,insertimage",
+                theme_advanced_toolbar_location: "top",
+                theme_advanced_toolbar_align: "left",
+                theme_advanced_statusbar_location: "bottom",
+                theme_advanced_resizing: true,
+            });
+
+            //when a new image is uploaded
+            $("#changeImage").on('change', '#imgUpload', function (event) {
+                $('#changePicButton').hide();
+                $('#currImg').hide();
+                $('#preview').show();
+
+                var selectedFile = event.target.files[0];
+                var reader = new FileReader();
+                var imgtag = document.getElementById('imgPreview');
+
+                reader.readAsDataURL(selectedFile);
+
+                //on image load
+                reader.onload = function (event) {
+                    //clear  out existing image
+                    imgtag.src = '';
+                    imgtag.title = '';
+                    imgtag.title = selectedFile.name;
+                    imgtag.src = event.target.result;
+
+                    //enable cropping on the image
+                    $('.image-cropper').each(function (unusedIndex, container) {
+                        container = $(container);
+                        var image = container.find("img.image");
+
+                        var path = image.attr('src');
+
+                        //create a canvas and set it to the cropped image as the profile pic preview
+                        var canvas = $('#preview')[0];
+                        var ctx = canvas.getContext('2d');
+                        var img = new Image();
+                        img.src = path;
+
+                        //every time the cropped image changes
+                        var update = function (coords) {
+                            if (parseInt(coords.w) <= 0 || parseInt(coords.h) <= 0) return;
+
+                            //convert image to canvas
+                            ctx.drawImage(img, coords.x, coords.y, coords.w, coords.h, 0, 0, 120, 120);
+
+                            image = canvas.toDataURL('image/jpeg', 0.5);
+
+                            var croppedImg = document.getElementById("preview").toDataURL("image/jpeg");
+                            croppedImg = croppedImg.replace('data:image/jpeg;base64,', '');
+
+                            var imgToUpload = document.getElementById('croppedImage');
+                            imgToUpload.value = croppedImg;
+                        }
+                        image.Jcrop({ onChange: update, onSelect: update, bgColor: 'black', bgOpacity: 0.6, aspectRatio: 1 });
+                    });
+                };
+
+            });
+
+            //keep new image; discard old
+            $('#uploadContainer').on('click', '#clearImage', function () {
+                $('#uploadContainer').empty();
+                $('#uploadContainer').html(
+                    '<img id="imgPreview" src="" class="image" style="max-width: 400px"/>' +
+                    '<input id="imgUpload" type="file" name="upload" style="margin-top: 15px; display: inline;" />' +
+                    '<input id="clearImage" type="button" value="Clear image" style="display: inline;"/>');
+            });
+
+            $('#alumniSearch').autocomplete({
+                source: '@Url.Action("SearchAlumni", "Alumni")',
+                minLength: 3,
+                select: function (event, ui) {
+                    window.location = "/Alumni/Alumnus/?userId=" + ui.item.value;
+                },
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("z-index", 1000);
+                }
+            });
+
+            $('#deactivateButton').click(function () {
+                if (confirm("Are you sure you want to deactivate your account? You will not be able to undo this action.")) {
+                    $.ajax({
+                            url: '@Url.Action("DeactivateAccount", "Alumni")',
+                            type: "GET",
+                            dataType: "json",
+                            success: function (data) {
+                                if (data.HasError !== true) {
+                                    $('#editProfile').html(data.Message);
+                                    setTimeout(function () { window.location = "/Home/Index"; }, 3000);
+                                } else {
+                                    $('#editProfile').html("<h3>We could not deactivate your account, please try again later.</h3>");
+                                }
+                            }
+                    });
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,133 @@
+﻿@using System.Collections.Specialized
+@using System.Configuration
+@using AlumniPortal.Models
+@using AlumniPortal.Utilities
+@model CareersViewModel
+
+<style type="text/css">
+    .headingPrimary {
+        text-align: center;
+        color: rgb(3, 65, 128);
+        font-weight: bolder;
+    }
+    .swiper-wrapper {
+        margin: 0 auto;
+        background-color: rgb(241, 241, 241);
+    }
+
+    .previewContainer {
+        padding: 10px 0 0 10px;
+        color: rgb(141, 141, 141);
+        background-color: rgb(241, 241, 241);
+        height: 300px;
+    }
+
+    .hr {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        border-color: lightgrey;
+    }
+
+    .articleTitle {
+        margin-top: 10px;
+        font-weight: bold;
+        font-size: 25px;
+        text-align: center;
+        color: rgb(117, 115, 115);
+    }
+
+    .swipeNav {
+        position: absolute;
+        top: 200px;
+        background-color: rgba(123, 237, 37, 0.7) !important;
+        opacity: 0.7;
+        z-index: 999;
+        padding: 3px 5px 3px 5px;
+        color: white;
+        font-weight: normal;
+        cursor: pointer;
+    }
+
+    .swipeLeft {
+        float: left;
+        left: 3px;
+    }
+
+    .swipeRight {
+        float: right;
+        right: 3px;
+    }
+
+    .newsViewArticle {
+        color: white;
+        display: block;
+        float: right;
+        margin-right: -20px;
+        right: 0;
+        text-decoration: none;
+        cursor: pointer !important;
+    }
+
+        .newsViewArticle:hover {
+            color: white;
+            text-decoration: none;
+        }
+</style>
+
+<div class="row">
+    <div class="col-sm-8">
+
+        <h3 class="headingPrimary">CAREERS</h3>
+        <hr class="hr" />
+
+        <div class="swipeNav swipeLeft"><span class="glyphicon glyphicon-chevron-left"></span></div>
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                @foreach (var a in Model.CareerArticles)
+                {
+                    <div class="swiper-slide">
+                        <div class="col-xs-12" style="height: 300px;">
+                            <div class="previewContainer">
+                                <h4 class="articleTitle">@a.Title</h4>
+                                <hr class="hr"/>
+                                <div>
+                                    @Html.Raw(a.Body)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+        <div class="swipeNav swipeRight "><span class="glyphicon glyphicon-chevron-right"></span></div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <h3>Recruit Talent vacancies</h3>
+            </div>
+            <div class="col-sm-6">
+                @Html.Action("DeloitteCareers", "Careers")
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-3" style="margin-top: 15px; min-width: 242px;">
+        @Html.Action("Calendar", "Events", new { isVertical = true })
+        @Html.Action("GalleryPartial", "Gallery")
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(function() {
+            var swiper = new Swiper('.swiper-container', {
+                pagination: '.swiper-pagination',
+                paginationClickable: true,
+                nextButton: '.swipeRight',
+                prevButton: '.swipeLeft'
+            });
+        })
+    </script>
+}

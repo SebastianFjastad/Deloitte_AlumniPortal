@@ -1,0 +1,304 @@
+﻿@using Microsoft.AspNet.Identity
+@model  List<Conversation>
+@{
+    ViewBag.Title = "Chat";
+}
+
+<style type="text/css">
+    .hr {
+        margin-bottom: 10px;
+        border-color: lightgrey;
+        color: rgb(141, 141, 141);
+        border-top: 1px solid #CECDCD;
+    }
+
+    .headingPrimary {
+        text-align: center;
+        font-size: large;
+        color: rgb(3, 65, 128);
+        font-weight: bolder;
+        margin-bottom: 0;
+        margin-top: 10px;
+        text-transform: uppercase;
+    }
+
+    .imgContainer {
+        float: left;
+        cursor: pointer;
+    }
+
+    .img-circle {
+        margin-top: 15px;
+        box-shadow: 0 0 0 1px rgb(3, 65, 128), 0 0 0 2px rgb(3, 65, 128), 0 0 0 3px white, 0 0 0 4px white;
+        -moz-box-shadow: 0 0 0 1px rgb(3, 65, 128), 0 0 0 2px rgb(3, 65, 128), 0 0 0 3px white, 0 0 0 4px white;
+        -webkit-shadow: 0 0 0 1px rgb(3, 65, 128), 0 0 0 2px rgb(3, 65, 128), 0 0 0 3px white, 0 0 0 4px white;
+    }
+
+    .userChatContainer {
+        float: left;
+        padding-top: 5px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        margin-left: 15px;
+        width: 65%;
+    }
+
+    .userName {
+        color: rgb(113, 109, 109);
+        font-weight: bolder;
+        font-size: 16px;
+    }
+
+    .messagePreview {
+        color: rgb(141, 141, 141);
+        font-size: 16px;
+        margin-top: 5px;
+    }
+
+    .lastModifiedDate {
+        color: rgb(141, 141, 141);
+        font-size: 14px;
+        display: inline;
+        margin-top: 10px;
+    }
+
+    .updateStatusButton {
+        font-size: 16px;
+        background-color: rgb(36, 95, 216);
+        color: white !important;
+        border: rgb(36, 95, 216) !important;
+        padding: 5px 10px;
+        margin-left: 15px;
+    }
+
+        .updateStatusButton:hover {
+            background-color: rgb(30, 77, 172);
+        }
+
+    .viewMoreContainer {
+        margin-top: 30px;
+        cursor: pointer;
+        padding: 2px 5px 2px 5px;
+        padding-left: 10px;
+        background-color: rgba(123, 237, 37, 0.6);
+        font-size: 20px;
+        font-weight: bolder;
+        color: white;
+    }
+
+    /*autocomplete styling*/
+    .ui-autocomplete {
+        background: white;
+        border-radius: 0px;
+        width: 162px;
+    }
+
+    .ui-autocomplete-input {
+        margin-top: 10px;
+        padding: 2px 2px 2px 10px;
+        font-size: 16px !important;
+        color: #4a4a4a;
+    }
+
+    ul.ui-autocomplete {
+        padding-left: 10px;
+        list-style-type: none;
+    }
+
+        ul.ui-autocomplete.ui-menu li {
+            font-size: 16px !important;
+            color: #4a4a4a;
+            padding-top: 6px;
+            cursor: pointer;
+        }
+
+            ul.ui-autocomplete.ui-menu li:hover {
+                font-weight: bolder;
+            }
+</style>
+
+@{
+    var currUserId = User.Identity.GetUserId();
+}
+
+
+<div class="row">
+    <div class="col-sm-8">
+        <div class="row">
+            <div class="col-xs-8">
+                <h3 class="headingPrimary">Conversations</h3>
+            </div>
+            <div class="col-xs-4">
+                <div class="pull-right">
+                    <input id="alumniSearch" type="text" placeholder="Search" />
+                </div>
+            </div>
+        </div>
+
+        <hr class="hr" />
+
+        <div id="conversationContainer">
+        @foreach (var conv in Model)
+        {
+            <div class="chatContainer">
+                @{
+                    //user is the other user
+                    var user = conv.UserA.Id != currUserId ? conv.UserA : conv.UserB;
+                    var imgPath = "";
+
+                    if (user.ProfilePic == null)
+                    {
+                        imgPath = "http://www.corporatetraveller.ca/assets/images/profile-placeholder.gif";
+                    }
+                    else
+                    {
+                        imgPath = "/Assets/Alumni/" + user.ProfilePic.AssetName;
+                    }
+                }
+
+                <div class="col-xs-12" style="border-bottom: lightgray 1px solid; padding-bottom: 15px;">
+                    <a href="@Url.Action("Alumnus", "Alumni", new {userId = user.Id})">
+                        <div class="imgContainer">
+                            <img src="@imgPath" class="img-circle" alt="profile pic" width="80" height="80" />
+                        </div>
+                    </a>
+                    <div class="userChatContainer" data-convid="@conv.ConversationId" data-userid="@user.Id">
+                        <div class="userName">@user.FirstName @user.LastName</div>
+
+                        @*if the curr user is waiting for them to accept*@
+                        @if (conv.UserA.Id == currUserId && conv.UserBAccepted == null)
+                        {
+                            <div class="messagePreview">Awaiting their acceptance</div>
+                        }
+                        //if the curr user must accept
+                        else if (conv.UserA.Id != currUserId && conv.UserBAccepted == null)
+                        {
+                            <div class="messagePreview">@user.FirstName wants to connect</div>
+                        }
+                        //users are connected display the messages
+                        else if (conv.UserBAccepted == true)
+                        {
+                            var convStatus = conv.Messages.Any() ? conv.Messages.Last().Body : "Start chatting";
+                            <div class="messagePreview" data-status="chat" data-chatid="@conv.ConversationId">@convStatus</div>
+                            //display first message or default
+                        }
+
+                        @if (conv.UserA.Id != currUserId && conv.UserBAccepted == null)
+                        {
+                            <input class="updateStatusButton" type="button" value="Accept" data-updateto="true" />
+                            <input class="updateStatusButton" type="button" value="Hide" data-updateto="false" />
+                        }
+                    </div>
+                    <div class="lastModifiedDate pull-right">@conv.LastModified.ToString("ddd") @conv.LastModified.ToString("dd") </div>
+                </div>
+            </div>
+                    }
+
+        <div id="conversationResults">
+            @*Pagination results*@
+        </div>
+        </div>
+        
+        <div class="form-group text-center">
+            <div id="loadMore" class="col-xs-4 col-xs-offset-4 viewMoreContainer">
+                <span>MORE</span>
+                <span class="glyphicon glyphicon-chevron-down" style="padding-top: 3px; margin-left: 5px;"></span>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-sm-3" style="margin-top: 15px; min-width: 242px;">
+        @Html.Action("Calendar", "Events", new { isVertical = true })
+        @Html.Action("GalleryPartial", "Gallery")
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
+
+    @*reference the auto generated hub*@
+    <script src="~/signalr/hubs"></script>
+
+    <script>
+        $(function () {
+
+            // Start the connection.
+            $.connection.hub.start().done(function () {
+                $('#sendmessage').click(function () {
+                    chat.server.sendMessage($('#from').val(), $('#to').val(), $('#message').val());
+                    $('#message').val('').focus();
+                });
+            });
+
+            $('#alumniSearch').autocomplete({
+                source: '@Url.Action("SearchAlumni", "Alumni")',
+                minLength: 3,
+                select: function (event, ui) {
+                    window.location = "/Alumni/Alumnus/?userId=" + ui.item.value + "&isConnectSearch=true";
+                },
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("z-index", 1000);
+                }
+            });
+
+            $('.updateStatusButton').on('click', function () {
+                var status = $(this).data('updateto');
+                var container = $(this).closest('.userChatContainer');
+                var convId = container.data('convid');
+                var userId = container.data('userid');
+
+                $.ajax({
+                    url: '@Url.Action("UpdateConnectStatus", "MyConnect")',
+                    type: "GET",
+                    dataType: "json",
+                    data: { conversationId: convId, userId: userId, isAccepted: status },
+                    success: function (data) {
+                        $('.updateStatusButton').hide();
+
+                        if (status === 'false') {
+                            container.hide();
+                        } else {
+                            container.find('.messagePreview').html(data.message);
+                        }
+                    }
+                });
+            });
+
+            //if conv status == chat then navigate to conversation between users
+            $('#conversationContainer').on('click', '.userChatContainer', function () {
+                var messageObj = $(this).find('.messagePreview');
+                var isChat = messageObj.data('status');
+                if (isChat === 'chat') {
+                    var convId = messageObj.data('chatid');
+                    window.location = "/MyConnect/Conversation/?convId=" + convId;
+                }
+            });
+
+            var page = 2;
+
+            $('#loadMore').on('click', function () {
+                $.ajax({
+                    url: '@Url.Action("GetConversationsPage", "MyConnect")',
+                    type: "GET",
+                    dataType: "html",
+                    data: { pageNo: page },
+                    success: function (data) {
+                        $('#conversationResults').append(data);
+                        page++;
+                    }
+                });
+            });
+
+            $('#alumniSearch').autocomplete({
+                source: '@Url.Action("SearchAlumni", "Alumni")',
+                minLength: 3,
+                select: function (event, ui) {
+                    window.location = "/Alumni/Alumnus/?userId=" + ui.item.value;
+                },
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("z-index", 1000);
+                }
+            });
+        });
+    </script>
+}

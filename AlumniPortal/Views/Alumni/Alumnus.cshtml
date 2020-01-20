@@ -1,0 +1,385 @@
+﻿@using AlumniPortal.Models
+@model AlumniPortal.Models.AlumnusViewModel
+
+@{
+    ViewBag.Title = "Profile";
+}
+
+<style type="text/css">
+    .hr {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        border-color: lightgrey;
+        color: rgb(141, 141, 141);
+        border-top: 1px solid #CECDCD;
+    }
+
+    .headingPrimary {
+        text-align: center;
+        font-size: large;
+        color: rgb(3, 65, 128);
+        font-weight: bolder;
+        margin-bottom: 0;
+        margin-top: 10px;
+        text-transform: uppercase;
+    }
+
+    .profileContainer {
+        width: 100%;
+        text-align: center;
+    }
+
+    .featuredContainer {
+        text-align: left;
+        width: 90px;
+        padding: 2px 5px 2px 5px;
+        padding-left: 10px;
+        background-color: rgba(123, 237, 37, 0.6);
+        font-size: 14px;
+        font-weight: bolder;
+        color: white;
+    }
+
+    .jobTitle {
+        color: rgb(113, 109, 109);
+        font-weight: bolder;
+    }
+
+    .secondaryTitle {
+        color: rgb(113, 109, 109);
+        font-weight: bolder;
+        margin-top: 30px;
+        font-size: 16px;
+    }
+
+    .subText {
+        color: rgb(141, 141, 141);
+        margin-top: 5px;
+    }
+
+        .subText > .glyphicon {
+            margin-right: 10px;
+        }
+
+    .aboutBody {
+        color: rgb(141, 141, 141);
+        margin-top: 15px;
+        text-align: left;
+    }
+
+    .boxCenter {
+        text-align: center;
+        text-align: -webkit-center;
+        position: relative;
+        bottom: 30px;
+    }
+
+    .img-circle {
+        box-shadow: 0 0 0 1px rgb(3, 65, 128), 0 0 0 2px rgb(3, 65, 128), 0 0 0 3px white, 0 0 0 4px white;
+        -moz-box-shadow: 0 0 0 1px rgb(3, 65, 128), 0 0 0 2px rgb(3, 65, 128), 0 0 0 3px white, 0 0 0 4px white;
+        -webkit-shadow: 0 0 0 1px rgb(3, 65, 128), 0 0 0 2px rgb(3, 65, 128), 0 0 0 3px white, 0 0 0 4px white;
+    }
+
+    /*autocomplete styling*/
+    .ui-autocomplete {
+        background: white;
+        border-radius: 0;
+        width: 160px;
+    }
+
+    .ui-autocomplete-input {
+        margin-top: 10px;
+        padding: 2px 2px 2px 10px;
+        font-size: 16px !important;
+        color: #4a4a4a;
+    }
+
+    ul.ui-autocomplete {
+        padding-left: 10px;
+        list-style-type: none;
+    }
+
+        ul.ui-autocomplete.ui-menu li {
+            font-size: 16px !important;
+            color: #4a4a4a;
+            padding-top: 6px;
+            cursor: pointer;
+        }
+
+            ul.ui-autocomplete.ui-menu li:hover {
+                font-weight: bolder;
+            }
+
+    .connectButton {
+        margin-top: 10px;
+        background-color: rgb(36, 95, 216);
+        color: white !important;
+        border: rgb(36, 95, 216) !important;
+        padding: 7px 10px;
+        border-radius: 0;
+    }
+
+        .connectButton:hover {
+            background-color: rgb(30, 77, 172);
+        }
+</style>
+
+@{
+    //if the alumni has a user profile we must use those details instead,
+    //because if they then go and update their details through the portal then we need to keep the featured user up to date
+    var id = "";
+    var profilePic = "http://www.corporatetraveller.ca/assets/images/profile-placeholder.gif";
+    var firstName = "";
+    var lastName = "";
+    var jobTitle = "";
+    var contactNo = "";
+    var email = "";
+    var website = "";
+    var about = "";
+
+    if (Model.IsFeatured)
+    {
+        //set all the fields to the alumni fields
+        if (Model.Alumnus.Asset != null)
+        {
+            profilePic = Model.Alumnus.Asset.AssetName;
+        }
+        id = Model.Alumnus.UserId;
+        firstName = Model.Alumnus.FirstName;
+        lastName = Model.Alumnus.LastName;
+        jobTitle = Model.Alumnus.JobTitle;
+        contactNo = Model.Alumnus.PhoneNumber;
+        email = Model.Alumnus.Email;
+        website = Model.Alumnus.Website;
+        about = Model.Alumnus.About;
+
+        //if the alumni is linked then override the fields with the user details if they exist
+        if (Model.Alumnus.User != null)
+        {
+            id = !string.IsNullOrEmpty(Model.Alumnus.User.Id) ? Model.Alumnus.User.Id : id;
+            profilePic = Model.Alumnus.User.ProfilePic != null ? Model.Alumnus.User.ProfilePic.AssetName : profilePic;
+            firstName = !string.IsNullOrEmpty(Model.Alumnus.User.FirstName) ? Model.Alumnus.User.FirstName : firstName;
+            lastName = !string.IsNullOrEmpty(Model.Alumnus.User.LastName) ? Model.Alumnus.User.LastName : lastName;
+            jobTitle = !string.IsNullOrEmpty(Model.Alumnus.User.JobTitle) ? Model.Alumnus.User.JobTitle : jobTitle;
+            contactNo = !string.IsNullOrEmpty(Model.Alumnus.User.PhoneNumber) ? Model.Alumnus.User.PhoneNumber : contactNo;
+            email = !string.IsNullOrEmpty(Model.Alumnus.User.Email) ? Model.Alumnus.User.Email : email;
+            about = !string.IsNullOrEmpty(Model.Alumnus.User.About) ? Model.Alumnus.User.About : about;
+        }
+    }
+    else
+    {
+        if (Model.User.ProfilePic != null)
+        {
+            profilePic = Model.User.ProfilePic.AssetName;
+        }
+        id = Model.User.Id;
+        firstName = Model.User.FirstName;
+        lastName = Model.User.LastName;
+        jobTitle = Model.User.JobTitle;
+        contactNo = Model.User.PhoneNumber;
+        email = Model.User.Email;
+        about = Model.User.About;
+    }
+
+
+    var imgPath = "";
+
+    if (profilePic == "http://www.corporatetraveller.ca/assets/images/profile-placeholder.gif")
+    {
+        imgPath = "http://www.corporatetraveller.ca/assets/images/profile-placeholder.gif";
+    }
+    else
+    {
+        imgPath = "/Assets/Alumni/" + profilePic;
+
+    }
+}
+
+<div class="row">
+    <div class="col-sm-8">
+        <div class="row">
+            <div class="col-xs-8">
+                <h3 class="headingPrimary">Profiles</h3>
+            </div>
+            <div class="col-xs-4">
+                <div class="pull-right">
+                    <input id="alumniSearch" type="text" placeholder="Search" />
+                </div>
+            </div>
+        </div>
+
+        <hr class="hr" />
+
+        @*Featured user*@
+        @if (Model.IsFeatured)
+        {
+            <div class="profileContainer">
+                <div class="featuredContainer">
+                    FEATURED
+                </div>
+
+                @if (Model.Alumnus.Asset != null)
+                {
+                <img src="~/Assets/Alumni/@profilePic" class="img-circle" alt="profile pic" width="120" height="120" />
+                }
+                else
+                {
+                <img src="@imgPath" class="img-circle" alt="profile pic" width="120" height="120" />
+                }
+
+                <div class="headingPrimary">@firstName @lastName</div>
+
+                <div class="jobTitle">@jobTitle</div>
+
+                @{
+                    //show connection status
+                    if (Model.User != null)
+                    {
+                        switch (Model.ConversationStatus)
+                        {
+                            case ConversationStatus.None:
+                                <div id="connectButton" data-userid="@Model.User.Id" type="button" class="btn btn-default connectButton">
+                                    <span class="glyphicon glyphicon-link" style="padding-right: 5px;"></span>Connect
+                                </div>
+                                <div id="connectResult"></div>
+                                break;
+                            case ConversationStatus.Awaiting:
+                                <div class="subText">Awaiting acceptance</div>
+                                break;
+                            case ConversationStatus.Connected:
+                                <span class="glyphicon glyphicon-ok" style="display: inline; color: rgb(3, 65, 128); margin-right: 5px;"></span><div style="display: inline;" class="subText">Connected</div>
+                                break;
+                            case ConversationStatus.Declined:
+                                break;
+                        }
+                    }
+                }
+
+                <div class="subText"><span class="glyphicon glyphicon-earphone"></span>@contactNo</div>
+
+                <div class="subText"><span class="glyphicon glyphicon-envelope"></span>@email</div>
+
+                <div class="subText"><span class="glyphicon glyphicon-globe"></span><a href="@string.Format("http://{0}", website)">@website</a></div>
+
+                <div class="secondaryTitle">About @firstName</div>
+
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3">
+                        <div class="aboutBody">
+                            @Html.Raw(about)
+                        </div>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.Alumnus.Interview))
+                {
+                <div class="secondaryTitle">Interview</div>
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3">
+
+                        <div class="aboutBody">
+                            @Html.Raw(Model.Alumnus.Interview)
+                        </div>
+                    </div>
+                </div>
+                }
+
+            </div>
+        }
+        else
+        {
+            @*Normal user*@
+            <div class="profileContainer">
+
+                @if (Model.Alumnus.Asset != null)
+                {
+                    <img src="~/Assets/Alumni/@profilePic" class="img-circle" alt="profile pic" width="120" height="120" />
+                }
+                else
+                {
+                    <img src="@imgPath" class="img-circle" alt="profile pic" width="120" height="120" />
+                }
+
+                <div class="headingPrimary">@firstName @lastName</div>
+
+                <div class="jobTitle">@jobTitle</div>
+
+                @{
+                    //show connection status
+                    switch (Model.ConversationStatus)
+                    {
+                        case ConversationStatus.None:
+                            <div id="connectButton" data-userid="@Model.User.Id" type="button" class="btn btn-default connectButton">
+                                <span class="glyphicon glyphicon-link" style="padding-right: 5px;"></span>Connect
+                            </div>
+                            <div id="connectResult"></div>
+                            break;
+                        case ConversationStatus.Awaiting:
+                            <div class="subText">Awaiting acceptance</div>
+                            break;
+                        case ConversationStatus.Connected:
+                            <span class="glyphicon glyphicon-ok" style="display: inline; color: rgb(3, 65, 128); margin-right: 5px;"></span><div style="display: inline;" class="subText">Connected</div>
+                            break;
+                            case ConversationStatus.Declined:
+                            break;
+                    }
+                }
+
+                @if (Model.User.AllowPubPhoneNo)
+                {
+                    <div class="subText"><span class="glyphicon glyphicon-earphone"></span>@contactNo</div>
+                }
+
+                @if (Model.User.AllowPubEmail)
+                {
+                    <div class="subText"><span class="glyphicon glyphicon-envelope"></span>@email</div>
+                }
+
+                <div class="secondaryTitle">About @firstName</div>
+
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3">
+                        <div class="aboutBody">
+                            @Html.Raw(about)
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    }
+    </div>
+    <div class="col-sm-3" style="margin-top: 15px; min-width: 242px;">
+        @Html.Action("Calendar", "Events", new { isVertical = true })
+        @Html.Action("GalleryPartial", "Gallery")
+    </div>
+</div>
+
+@section scripts
+    {
+    <script type="text/javascript">
+        $(function () {
+            $('#alumniSearch').autocomplete({
+                source: '@Url.Action("SearchAlumni", "Alumni")',
+                minLength: 3,
+                select: function (event, ui) {
+                    window.location = "/Alumni/Alumnus/?userId=" + ui.item.value;
+                },
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("z-index", 1000);
+                }
+            });
+
+            $('#connectButton').on('click', function () {
+                $.ajax({
+                    url: '@Url.Action("InitiateConnect", "MyConnect")',
+                    type: "GET",
+                    dataType: "json",
+                    data: { userId: $('#connectButton').data('userid') },
+                    success: function (data) {
+                        $('#connectResult').html('<div class=\"subText\">' + data.response + '</div>');
+                        $('#connectButton').hide();
+                    }
+                });
+            });
+        })
+    </script>
+}

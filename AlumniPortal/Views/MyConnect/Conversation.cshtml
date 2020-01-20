@@ -1,0 +1,233 @@
+﻿@using Microsoft.AspNet.Identity
+@model Conversation
+@{
+    ViewBag.Title = "Conversation";
+}
+
+<style type="text/css">
+    .hr {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        border-color: lightgrey;
+        color: rgb(141, 141, 141);
+        border-top: 1px solid #CECDCD;
+    }
+
+    .headingPrimary {
+        text-align: center;
+        font-size: large;
+        color: rgb(3, 65, 128);
+        font-weight: bolder;
+        margin-bottom: 0;
+        margin-top: 10px;
+        text-transform: uppercase;
+    }
+
+    .imgContainer {
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .img-circle {
+        margin-top: 15px;
+        display: block;
+        box-shadow: 0 0 0 1px rgb(3, 65, 128), 0 0 0 2px rgb(3, 65, 128), 0 0 0 3px white, 0 0 0 4px white;
+        -moz-box-shadow: 0 0 0 1px rgb(3, 65, 128), 0 0 0 2px rgb(3, 65, 128), 0 0 0 3px white, 0 0 0 4px white;
+        -webkit-shadow: 0 0 0 1px rgb(3, 65, 128), 0 0 0 2px rgb(3, 65, 128), 0 0 0 3px white, 0 0 0 4px white;
+    }
+
+    .userName {
+        color: rgb(113, 109, 109);
+        font-weight: bolder;
+        display: block;
+        font-size: 16px;
+    }
+
+    .currUser {
+        background-color: rgb(238, 238, 238);
+        color: rgb(113, 109, 109);
+        border: solid 1px;
+        border-color: lightgray;
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+
+    .otherUser {
+        background-color: rgb(198, 225, 245);
+        color: rgb(113, 109, 109);
+        border: solid 1px;
+        border-color: rgb(152, 186, 211);
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+
+    .sendMessageContainer {
+        background-color: rgb(238, 238, 238);
+        padding: 10px;
+    }
+
+    input[type="text"] {
+        border: 1px solid rgb(183, 183, 183) !important;
+        color: rgb(113, 109, 109);
+    }
+
+    .sendButton {
+        font-size: 16px;
+        min-width: 65px;
+        display: inline-block;
+        background-color: rgb(36, 95, 216);
+        color: white !important;
+        border: rgb(36, 95, 216) !important;
+        padding: 5px 10px;
+        margin-left: 15px;
+    }
+
+        .sendButton:hover {
+            background-color: rgb(30, 77, 172);
+        }
+
+    #messages {
+        height: 600px;
+        max-height: 600px;
+        overflow-y: scroll;
+    }
+
+    #message {
+        width: 80%;
+        max-width: 700px;
+        height: 32px;
+        border: 0;
+        padding-left: 10px;
+    }
+
+    .msgDate {
+        font-size: 12px;
+        position: absolute;
+        bottom: 5px;
+        right: 10px;
+        color: rgb(159, 159, 159);
+    }
+</style>
+
+@{
+    var currUserId = User.Identity.GetUserId();
+
+    //currUser
+    var currUser = Model.UserA.Id == currUserId ? Model.UserA : Model.UserB;
+    var otherUser = Model.UserA.Id != currUserId ? Model.UserA : Model.UserB;
+    var currUserImgPath = "";
+    var otherUserImgPath = "";
+
+    currUserImgPath = currUser.ProfilePic == null ? "http://www.corporatetraveller.ca/assets/images/profile-placeholder.gif" : "/Assets/Alumni/" + currUser.ProfilePic.AssetName;
+    otherUserImgPath = otherUser.ProfilePic == null ? "http://www.corporatetraveller.ca/assets/images/profile-placeholder.gif" : "/Assets/Alumni/" + otherUser.ProfilePic.AssetName;
+}
+
+
+<div class="row">
+    <div class="row">
+        <div class="col-sm-8">
+            <h3 class="headingPrimary">CONVERSATION BETWEEN</h3>
+            <div class="text-center">
+
+                <div class="imgContainer text-center">
+                    <img src="@currUserImgPath" class="img-circle" alt="profile pic" width="80" height="80" />
+                    <div style="margin-top: 10px; color: rgb(113, 109, 109)">
+                        You
+                    </div>
+                </div>
+
+                <div style="display: inline-block; color: lightgray; font-size: 20px; position: relative; bottom: 55px; width: 30px;">
+                    &
+                </div>
+
+                <div class="imgContainer text-center">
+                    <img src="@otherUserImgPath" class="img-circle" alt="profile pic" width="80" height="80" />
+                    <div style="margin-top: 10px; color: rgb(113, 109, 109)">
+                        @otherUser.FirstName @otherUser.LastName
+                    </div>
+                </div>
+
+            </div>
+
+            <hr class="hr" style="margin-bottom: 15px;" />
+
+            <div class="row">
+                <div id="messages" class="col-xs-12">
+                    @foreach (var msg in Model.Messages)
+                    {
+                        var sender = msg.Sender.Id == currUserId ? "currUser" : "col-xs-offset-2 otherUser";
+                        <div class="col-xs-10 @sender">
+                            @msg.Body
+                            <div class="msgDate">
+                                @msg.CreatedDate.ToString("HH:mm") @msg.CreatedDate.ToString("MMM")
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    @*Signal r messenger*@
+                    <div class="sendMessageContainer">
+                        <form id="messageForm" method="GET">
+                            <input id="message" type="text" placeholder="Message" />
+                            <input id="sendMessage" class="sendButton" type="submit" value="Send" />
+                            <input type="hidden" id="from" value="@currUser.Id" />
+                            <input type="hidden" id="to" value="@otherUser.Id" />
+                            <input type="hidden" id="convId" value="@Model.ConversationId" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-sm-3" style="margin-top: 15px; min-width: 242px;">
+            @Html.Action("Calendar", "Events", new { isVertical = true })
+            @Html.Action("GalleryPartial", "Gallery")
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
+
+    @*reference the auto generated hub*@
+    <script src="~/signalr/hubs"></script>
+
+    <script>
+        $(function () {
+            var chat = $.connection.chatHub;
+
+            //scroll the message chat content
+            function Scroll() {
+                var chatConatiner = $('#messages');
+                var height = chatConatiner[0].scrollHeight;
+                chatConatiner.scrollTop(height);
+            }
+
+            //initate the chat to last sent message position
+            Scroll();
+
+            //add incoming message to chat
+            chat.client.addChatMessage = function (message, date) {
+                $('#messages').append('<div class=\"col-xs-10 col-xs-offset-2 otherUser\"> ' + message + '<div class=\"msgDate\">' + moment(date).format('HH:mm ddd D MMM') + '</div></div>');
+                Scroll();
+            };
+
+            // Start the connection.
+            $.connection.hub.start().done(function () {
+                $('#messageForm').submit(function (e) {
+                    e.preventDefault();
+                    //send the message if has value
+                    if ($('#message').val().length > 0) {
+                        chat.server.sendMessage($('#convId').val(), $('#to').val(), $('#from').val(), $('#message').val());
+                        $('#messages').append('<div class=\"col-xs-10 currUser\"> ' + $('#message').val() + '<div class=\"msgDate\">' + moment().format('HH:mm ddd D MMM') + '</div></div>');
+                        Scroll();
+                        $('#message').val('').focus();
+                    }
+                });
+            });
+        });
+    </script>
+}
